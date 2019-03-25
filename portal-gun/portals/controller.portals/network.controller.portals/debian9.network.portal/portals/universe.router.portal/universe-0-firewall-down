@@ -1,0 +1,21 @@
+#!/bin/sh
+
+
+# Flush everything
+iptables -F
+iptables -X
+
+# Need a way to put the virbr0 routing instructions back in
+
+# Disable all connections
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+iptables -P FORWARD DROP
+
+# Allow outgoing SSH 
+iptables -A OUTPUT -o virbr0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+# Allow incoming established SSH
+iptables -A INPUT -i virbr0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+
+
+

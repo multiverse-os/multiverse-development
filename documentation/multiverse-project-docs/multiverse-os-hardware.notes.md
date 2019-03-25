@@ -1,0 +1,4 @@
+# Multiverse OS Hardware
+One facet of the Multiverse OS project is the collaborative effort to design open source Desktop, Laptop, Tablets and Phones that are designed to run Multiverse OS on open source real-time ARM64 processors.
+
+The design process will be done in such a way that it will be possible for advanced users to construct their own devices using the designs, instructions and so on. Many of the designs are actively being prototyped, and with collapse of Moores law in combination with the lack of consumer understanding of new technology has led to a massive pool of near cutting edge equipment including OLED displays on devices released 1-2 years ago that can be purchased as fraction of the cost of a new OLED display. This allows for the construction of open source hardware made of parts meant to be replacements, or refurbished or recycled parts, preventing them from going to the landfill and building cutting edge open source technology. 

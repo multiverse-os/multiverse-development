@@ -1,0 +1,49 @@
+#==============================================================================
+# Multiverse OS: Network Controller [network.controller.portal]
+#------------------------------------------------------------------------------
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+#==============================================================================
+# LAN/WAN Network        [Subnet: 192.168.0.0/24]
+#------------------------------------------------------------------------------
+auto enp5s1
+iface enp5s1 inet static
+	address 192.168.0.150
+	netmask 255.255.255.0
+	gateway 192.168.0.1
+
+#iface enp5s1 inet dhcp
+#==============================================================================
+# UNIVERSE NETWORK       [Subnet: 10.0.0.0/24]
+#------------------------------------------------------------------------------
+#auto enp5s2
+#iface enp5s2 inet dhcp
+#iface enp5s2 inet static
+#	address 10.0.0.1
+#	netmask 255.255.255.0
+#	gateway 10.0.0.1
+
+#iface enp5s2 inet dhcp
+#==============================================================================
+# GALAXY NETWORK         [Subnet: 10.1.1.0/24]
+#------------------------------------------------------------------------------
+#auto enp5s3
+#iface enp5s3 inet static
+#	address 10.1.1.254
+#	netmask 255.255.255.0
+#	gateway 10.1.1.1
+
+#iface enp5s3 inet dhcp
+#==============================================================================
+# STAR NETWORK           [Subnet: 10.2.2.0/24]
+#------------------------------------------------------------------------------
+#auto enp5s4
+#iface enp5s4 inet static
+#	address 10.2.2.254
+#	netmask 255.255.255.0
+#	gateway 10.2.2.1
+
+#iface enp5s4 inet dhcp

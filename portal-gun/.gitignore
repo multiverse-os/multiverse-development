@@ -1,0 +1,5 @@
+experiments/*
+*.iso
+*.base
+*.qcow2
+*.raw

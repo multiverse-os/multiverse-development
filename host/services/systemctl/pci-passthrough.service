@@ -1,0 +1,10 @@
+[Unit]
+Description=PCI passthrough
+Before=libvirtd.service
+
+[Service]
+Type=oneshot
+ExecStart=/var/multiverse/scripts/pci-devices/passthrough.sh
+
+[Install]
+WantedBy=multi-user.target

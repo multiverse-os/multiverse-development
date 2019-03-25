@@ -1,0 +1,10 @@
+# Default Alpine
+af_packet
+ipv6
+
+# Hypervisor
+vfio
+vfio
+9p
+9pnet
+9pnet_virtio

@@ -1,0 +1,3 @@
+# This will simplify gem installation which has
+# a significant positive impact on installation
+gem: --no-ri --no-rdoc

@@ -1,0 +1,22 @@
+=[Network Controller]==================
+=                                     =
+=  {TODO: List PHY devices with IP}   =
+=                                     =
+=  eth0 .............. 192.168.1.114  =
+=                                     =
+=== UNIVERSE NETWORK ==================
+=                                     =
+=   {LIST LEASED IPs with MAC}        =
+=                                     =
+=                                     =
+== GALAXY NETWORK =====================
+=                                     =
+=  {LIST LEASED IPs with MAC maybe}   =
+=                                     =
+=                                     =
+== STAR NETWORK =======================
+=                                     =
+=  {List tor processes and WAN IPs}   =
+=                                     =
+========[universe.router.multiverse]===
+                    Built on Alpine 3.7

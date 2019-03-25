@@ -1,0 +1,10 @@
+## ASUS X299 Prime Motherboard: Network PCI Devices
+## ================================================
+## IMPORT vfio management module
+. /home/user/multiverse-os/scripts/sh-framework/modules/multiverse/vfio-management.sh
+
+passthrough net 8086:15b8
+passthrough net 8086:1539
+passthrough net 1ae9:0310
+passthrough net 168c:003e
+

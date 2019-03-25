@@ -1,0 +1,3 @@
+ ?SECTION NEW
+##   FromZone ToZone:ToIP   Protocol ToPort 
+ DNAT    vpn    gal:10.1.1.10 tcp 4848 

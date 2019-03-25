@@ -1,0 +1,7 @@
+*.qcow2
+*.qcow
+*.img
+*.iso
+*.base
+*.portal
+*.raw

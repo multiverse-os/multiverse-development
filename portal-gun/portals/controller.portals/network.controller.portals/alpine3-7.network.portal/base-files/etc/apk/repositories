@@ -1,0 +1,9 @@
+#
+# TODO: Make a template that fills in the 
+# repo with the necessary repositories
+http://linorg.usp.br/AlpineLinux/v3.7/main
+http://linorg.usp.br/AlpineLinux/v3.7/community
+http://linorg.usp.br/AlpineLinux/edge/main
+#http://linorg.usp.br/AlpineLinux/edge/community
+#http://linorg.usp.br/AlpineLinux/edge/testing
+

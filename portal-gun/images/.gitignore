@@ -1,0 +1,12 @@
+debian-*.iso*
+alpine*.iso*
+*.iso
+*.img
+*.raw
+*.qcow
+*.qcow2
+*.base
+*.portal
+*.id
+
+boot-images/*

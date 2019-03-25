@@ -1,0 +1,19 @@
+#=============================================================================
+# Multiverse OS
+#=============================================================================
+/dev/vg0/lv_root	/	        ext4	rw,relatime,data=ordered 0 1
+UUID=8AA9-7DA2	        /boot/efi	vfat	rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=utf8,shortname=mixed,errors=remount-ro 0 2
+/dev/vg0/lv_swap	swap	        swap	defaults	0 0
+
+#=============================================================================
+# Multiverse OS: Network Controller
+#-----------------------------------------------------------------------------
+network-controller /mnt/network-controller 9p trans=virtio,9p2000.L,rw,posixacl,cache=none,nofail 0 0
+
+#=============================================================================
+# Multiverse OS: Hypervisor Images
+#-----------------------------------------------------------------------------
+os-images     /mnt/images/os-images     9p trans=virtio,9p2000.L,rw,posixacl,cache=none,nofail 0 0
+router-images /mnt/images/router-images 9p trans=virtio,9p2000.L,rw,posixacl,cache=none,nofail 0 0
+base-images   /mnt/images/base-images   9p trans=virtio,9p2000.L,rw,posixacl,cache=none,nofail 0 0
+

@@ -1,0 +1,73 @@
+#!/bin/sh -e
+################################################################################
+## PCI Passthrough 
+################################################################################
+# TODO: This should be handled by a multiverse daemon running on the host, 
+# it should detect the devices that need passthrough, make it easy for the
+# user to add and remove items with a YAML configuraiton. And handle checking
+# if the udev rules exist (because they may change, for example, if a new HD
+# is added) and installing any missing udev rules. 
+#
+# This will also be the foundation for a lot of other functionality but this
+# specific functionality could serve as a great starting point. 
+#
+## USB Controller ##############################################################
+#00:14.0 USB controller [0c03]: Intel Corporation Device [8086:a2af]
+vfio-bind 8086:a2af
+#vfio-bind 00:14.0
+
+
+## Video Graphics Card (VGA) ###################################################
+#19:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Device [1002:6863]
+vfio-bind 1002:6863
+#vfio-bind 19:00.0
+#19:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Device [1002:aaf8]
+vfio-bind 1002:aaf8
+#vfio-bind 19:00.1
+
+
+## Networking Interface Cards (NICs) ###########################################
+#00:1f.6 Ethernet controller [0200]: Intel Corporation Ethernet Connection (2) I219-V [8086:15b8]
+vfio-bind 8086:15b8
+#vfio-bind 00:1f.6
+#02:00.0 Ethernet controller [0200]: Intel Corporation I211 Gigabit Network Connection [8086:1539] (rev 03)
+vfio-bind 8086:1539
+#vfio-bind 02:00.0
+
+
+#b5:00.0 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 07)
+#b6:00.0 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 07)
+vfio-bind b5:00.0
+vfio-bind b6:00.0
+#vfio-bind 10ec:8168
+
+## Other #######################################################################
+# 00:14.2 Signal processing controller [1180]: Intel Corporation Device [8086:a2b1]
+#passthrough usb 8086:a2b1
+vfio-bind 8086:a2b1
+#vfio-bind 00:14.2
+
+
+################################################################################
+# Hacks to fix issues that should be resovled with
+# proper config
+################################################################################
+# NOTE: This is already done with udev
+# Correct the permissions (should be done with udev)
+# TODO: Is the top level folder permissions fixed by udev yet?
+chmod 770 /dev/vfio
+chown -R root:kvm /dev/vfio
+chmod 660 /dev/vfio/*
+
+# TODO: Not sure what introduced this error, but without the below line, could
+# not access libvirt user session (root was fine), and this folder had perms
+# root:libvirt and missing +x. It also prevented `lspci` from being ran.
+chmod +x /sys/devices/pci0000:b2/0000:b2:03.0/0000:b3:00.0/0000:b4:03.0/0000\:b5\:00.0/
+
+# TODO: This additionally should be done with udev and removed from here
+chown root:kvm /dev/disk/by-uuid/*
+
+echo "================================================================================"
+echo "Execution of '/etc/rc.local' successful"
+
+exit 0

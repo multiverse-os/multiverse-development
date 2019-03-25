@@ -1,0 +1,38 @@
+#
+# Multiverse .gitignore
+########################################
+
+# Various VM Images
+*.qcow2
+*.qcow
+*.ova
+*.iso
+*.vdmk
+*.raw
+*.xz
+
+# Multiverse VM Image (Faux) Types
+*.base
+portal-gun/images/base-images/*.base
+portal-gun/images/portal-images/*.portal
+portal-gun/images/scramble-id-images/*.id
+
+# Vim temp files
+*.swo
+*.swp
+
+# Machine specific roms
+machines/*/*.rom
+
+# Run folder
+run/
+run/*
+
+# User data folder
+user-data/*
+user-data/
+data/*
+data/
+
+# Libvirtd socket (should be reinitialized via script)
+libvirtd-socket/* 

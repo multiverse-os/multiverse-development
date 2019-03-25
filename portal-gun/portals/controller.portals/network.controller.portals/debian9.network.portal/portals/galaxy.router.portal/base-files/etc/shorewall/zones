@@ -1,0 +1,17 @@
+#
+# Shorewall -- /etc/shorewall/zones
+#
+# For information about this file, type "man shorewall-zones"
+#
+# The manpage is also online at
+# http://www.shorewall.net/manpages/shorewall-zones.html
+#
+###############################################################################
+#ZONE		TYPE		OPTIONS		IN_OPTIONS	OUT_OPTIONS
+
+fw		firewall
+wan		ipv4
+lan:wan		ipv4
+uni:wan		ipv4
+gal		ipv4
+vpn		ipv4

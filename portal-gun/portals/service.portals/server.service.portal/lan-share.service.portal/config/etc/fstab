@@ -1,0 +1,5 @@
+UUID=6a700aec-1a6d-4cd2-8600-65a422f9069c	/	ext4	rw,relatime,data=ordered 0 1
+UUID=33871aa3-8ba2-41c2-bafc-259ca4756ef1	/boot	ext4	rw,relatime,data=ordered 0 2
+UUID=d8a4e00a-d2eb-4aef-a60e-5802287bcddf	swap	swap	defaults	0 0
+multiverse		/mnt/multiverse		9p	trans=virtio,9p2000.L,rw,posixacl,cache=none		0	0
+

@@ -1,0 +1,12 @@
+*.qcow2
+*.crdownload
+*.qcow
+*.img
+*.base
+*.portal
+*.raw
+
+# OS Images (And ensuring downloads without cleanup will not be added to the repo)
+*.iso
+*.iso.[0-9]
+*.iso.[0-9][0-9]

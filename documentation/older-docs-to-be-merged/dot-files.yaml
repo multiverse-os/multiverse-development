@@ -1,0 +1,11 @@
+profiles:
+  user:
+    dot-files:
+      "init.vim":
+        contains_secrets: false
+        locations:
+          neovim:
+            conditional: "binary('nvim').exists?"
+            paths: ["~/.config/nvim/init.vim"]
+          vim:
+            path: ["~/.vimrc", "~/.vim/init.vim"]

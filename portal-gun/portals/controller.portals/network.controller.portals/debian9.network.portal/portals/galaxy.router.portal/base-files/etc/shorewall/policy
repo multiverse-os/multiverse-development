@@ -1,0 +1,15 @@
+#
+# Shorewall -- /etc/shorewall/policy
+#
+# For information about entries in this file, type "man shorewall-policy"
+#
+# The manpage is also online at
+# http://www.shorewall.net/manpages/shorewall-policy.html
+#
+###############################################################################
+#SOURCE		DEST		POLICY	LOGLEVEL	RATE	CONNLIMIT
+fw		all		ACCEPT
+gal		vpn		ACCEPT
+gal		lan		DROP
+gal		uni		DROP
+all		all		DROP

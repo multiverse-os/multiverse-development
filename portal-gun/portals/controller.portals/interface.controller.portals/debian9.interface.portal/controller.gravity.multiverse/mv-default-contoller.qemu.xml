@@ -1,0 +1,192 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh edit controller.debian9.multiverse
+or other application using the libvirt API.
+-->
+
+<domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
+  <name>controller.debian9.multiverse</name>
+  <uuid>cfbf5753-5306-4d27-a871-1c76aa97f28b</uuid>
+  <memory unit='KiB'>29360128</memory>
+  <currentMemory unit='KiB'>29360128</currentMemory>
+  <vcpu placement='static' cpuset='0-8,10-18'>18</vcpu>
+  <cputune>
+    <vcpupin vcpu='0' cpuset='0'/>
+    <vcpupin vcpu='1' cpuset='10'/>
+    <vcpupin vcpu='2' cpuset='1'/>
+    <vcpupin vcpu='3' cpuset='11'/>
+    <vcpupin vcpu='4' cpuset='12'/>
+    <vcpupin vcpu='5' cpuset='2'/>
+    <vcpupin vcpu='6' cpuset='13'/>
+    <vcpupin vcpu='7' cpuset='3'/>
+    <vcpupin vcpu='8' cpuset='14'/>
+    <vcpupin vcpu='9' cpuset='4'/>
+    <vcpupin vcpu='10' cpuset='15'/>
+    <vcpupin vcpu='11' cpuset='5'/>
+    <vcpupin vcpu='12' cpuset='16'/>
+    <vcpupin vcpu='13' cpuset='6'/>
+    <vcpupin vcpu='14' cpuset='17'/>
+    <vcpupin vcpu='15' cpuset='7'/>
+    <vcpupin vcpu='16' cpuset='18'/>
+    <vcpupin vcpu='17' cpuset='8'/>
+  </cputune>
+  <os>
+    <type arch='x86_64' machine='pc-i440fx-2.8'>hvm</type>
+    <loader readonly='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE.fd</loader>
+    <nvram>/home/user/.config/libvirt/qemu/nvram/controller.debian9.multiverse_VARS.fd</nvram>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <hap state='on'/>
+    <pmu state='off'/>
+    <vmport state='off'/>
+  </features>
+  <cpu mode='host-passthrough'>
+    <topology sockets='1' cores='9' threads='2'/>
+    <feature policy='disable' name='lahf_lm'/>
+    <feature policy='require' name='fpu'/>
+    <feature policy='require' name='pse'/>
+    <feature policy='require' name='pse36'/>
+    <feature policy='require' name='bmi2'/>
+    <feature policy='require' name='rtm'/>
+    <feature policy='require' name='lm'/>
+    <feature policy='require' name='avx2'/>
+    <feature policy='require' name='apic'/>
+    <feature policy='require' name='mmx'/>
+    <feature policy='require' name='aes'/>
+    <feature policy='require' name='nx'/>
+    <feature policy='require' name='pdpe1gb'/>
+    <feature policy='require' name='clflush'/>
+    <feature policy='require' name='vme'/>
+    <feature policy='require' name='ss'/>
+    <feature policy='require' name='avx'/>
+    <feature policy='require' name='hle'/>
+    <feature policy='require' name='erms'/>
+    <feature policy='require' name='xsave'/>
+    <feature policy='require' name='hypervisor'/>
+    <feature policy='require' name='cx16'/>
+    <feature policy='require' name='popcnt'/>
+    <feature policy='require' name='movbe'/>
+    <feature policy='require' name='sse2'/>
+    <feature policy='require' name='ssse3'/>
+    <feature policy='require' name='sse4.1'/>
+    <feature policy='require' name='sse4.2'/>
+  </cpu>
+  <clock offset='utc'>
+    <timer name='rtc' tickpolicy='catchup' track='guest'>
+      <catchup threshold='123' slew='120' limit='10000'/>
+    </timer>
+    <timer name='pit' tickpolicy='discard'/>
+    <timer name='hpet' present='no'/>
+    <timer name='hypervclock' present='no'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>restart</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' cache='none' io='native'/>
+      <source file='/home/user/.local/share/libvirt/images/controller.debian9.multiverse.qcow2'/>
+      <target dev='vda' bus='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0'/>
+    </disk>
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native'/>
+      <source dev='/dev/disk/by-uuid/022bd185-eab7-4faf-96ac-b3e74ecc9f65'/>
+      <target dev='vdb' bus='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0a' function='0x0'/>
+    </disk>
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native'/>
+      <source dev='/dev/disk/by-uuid/735bcd84-3306-48c7-b5a7-774ea11d8a81'/>
+      <target dev='vdc' bus='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0b' function='0x0'/>
+    </disk>
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native'/>
+      <source dev='/dev/disk/by-uuid/8efad1a2-d5a3-413c-ac27-c0b1524d7064'/>
+      <target dev='vdd' bus='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0c' function='0x0'/>
+    </disk>
+    <controller type='usb' index='0' model='ich9-ehci1'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x7'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci1'>
+      <master startport='0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0' multifunction='on'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci2'>
+      <master startport='2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x1'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci3'>
+      <master startport='4'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x2'/>
+    </controller>
+    <controller type='pci' index='0' model='pci-root'/>
+    <controller type='ide' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
+    </controller>
+    <controller type='virtio-serial' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>
+    </controller>
+    <filesystem type='mount' accessmode='passthrough'>
+      <driver type='path' wrpolicy='immediate'/>
+      <source dir='/home/user/multiverse'/>
+      <target dir='Multiverse'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x09' function='0x0'/>
+    </filesystem>
+    <interface type='bridge'>
+      <mac address='00:00:10:01:01:02'/>
+      <source bridge='virbr1'/>
+      <model type='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
+    </interface>
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>
+      <address type='virtio-serial' controller='0' bus='0' port='1'/>
+    </channel>
+    <channel type='spicevmc'>
+      <target type='virtio' name='com.redhat.spice.0'/>
+      <address type='virtio-serial' controller='0' bus='0' port='2'/>
+    </channel>
+    <input type='mouse' bus='ps2'/>
+    <input type='keyboard' bus='ps2'/>
+    <input type='tablet' bus='usb'>
+      <address type='usb' bus='0' port='1'/>
+    </input>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <source>
+        <address domain='0x0000' bus='0x00' slot='0x14' function='0x0'/>
+      </source>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0d' function='0x0'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <source>
+        <address domain='0x0000' bus='0x19' slot='0x00' function='0x0'/>
+      </source>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0e' function='0x0'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <source>
+        <address domain='0x0000' bus='0x19' slot='0x00' function='0x1'/>
+      </source>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x0f' function='0x0'/>
+    </hostdev>
+    <memballoon model='virtio'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x08' function='0x0'/>
+    </memballoon>
+  </devices>
+  <qemu:commandline>
+    <qemu:arg value='-cpu'/>
+    <qemu:arg value='host,l3-cache=on'/>
+  </qemu:commandline>
+</domain>
