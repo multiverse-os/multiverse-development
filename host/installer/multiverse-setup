@@ -54,6 +54,11 @@ warning="\e[93m"
 fail="\e[91m"
 reset="\e[0m"
 #==============================================================================
+# Settings
+USER_HOME="/home/user/"
+GIT_SRC_PATH="/home/user/multiverse/"
+MV_CONFIG_PATH="/etc/multiverse/"
+#==============================================================================
 
 echo -e $header"Multiverse OS Host Machine Setup"$reset
 echo -e $accent"================================"$reset
@@ -113,13 +118,13 @@ cd $USER_HOME && git clone https://github.com/hackwave/multiverse-development mu
 
 echo -e $strong"Downloading Linux distributions$accent os-images$reset needed for Multiverse OS installation..."$reset
 
-cd $GIT_SRC_DIR/images/os-images && ./alpine-dl-and-verify.sh
-cd $GIT_SRC_DIR/images/os-images && ./debian-dl-and-verify.sh
-cd $GIT_SRC_DIR/images/os-images && ./whonix-dl-and-verify.sh
+cd $GIT_SRC_PATH/images/os-images && ./alpine-dl-and-verify.sh
+cd $GIT_SRC_PATH/images/os-images && ./debian-dl-and-verify.sh
+cd $GIT_SRC_PATH/images/os-images && ./whonix-dl-and-verify.sh
 
 
 echo -e $strong"Fixing permissions on git repository, setting it to  $accent user:user$reset ..."$reset
-chown -R user:user $GIT_SRC_DIR
+chown -R user:user $GIT_SRC_PATH
 
 echo -e $strong"Setting generic git user and name to increase ones psuedoanonymity (do not change this, define this in your development application VMs)..."$reset
 
@@ -139,22 +144,24 @@ usermod -a -G kvm user
 usermod -a -G libvirt user
 
 echo -e $strong"Copy limits.conf file from$accent host.multiverse$reset machines folder to '/etc/security'..."$reset
-cp $GIT_SRC_DIR/machines/host.multiverse/config/etc/security/limits.conf /etc/security
+cp $GIT_SRC_PATH/machines/host.multiverse/config/etc/security/limits.conf /etc/security
 
 echo -e $strong"Deleting default virtaul network 'default'..."$reset
 virsh net-undefine default
 
 echo -e $strong"Using$accent host.multiverse$reset virtual network xml to define virtual networks: [virbr0, virbr1, virbr2]"$reset
 
-virsh net-define $GIT_SRC_DIR/machines/host.multiverse/xml/networks/virbr0.xml
-virsh net-define $GIT_SRC_DIR/machines/host.multiverse/xml/networks/virbr1.xml
-virsh net-define $GIT_SRC_DIR/machines/host.multiverse/xml/networks/virbr2.xml
+# TODO: This is old style
+#virsh net-define $GIT_SRC_PATH/machines/host.multiverse/xml/networks/virbr0.xml
+#virsh net-define $GIT_SRC_PATH/machines/host.multiverse/xml/networks/virbr1.xml
+#virsh net-define $GIT_SRC_PATH/machines/host.multiverse/xml/networks/virbr2.xml
 
 echo -e $strong"Configuring each virbrX to start at boot..."$reset
 
-virsh net-autostart virbr0
-virsh net-autostart virbr1
-virsh net-autostart virbr2
+# TODO: This is the old style
+#virsh net-autostart virbr0
+#virsh net-autostart virbr1
+#virsh net-autostart virbr2
 
 echo -e $strong"Creating '/etc/qemu' folder..."$reset
 mkdir -p /etc/qemu
