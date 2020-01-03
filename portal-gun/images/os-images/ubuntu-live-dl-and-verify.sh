@@ -11,9 +11,17 @@ reset="\e[0m"
 
 start_dir=$(pwd)
 
-echo -e $header"Ubuntu Desktop 17.10.1 amd64"$reset
+MAJOR="18"
+MINOR="04"
+PATCH="3"
+
+ARCH="amd64"
+
+ISO_TYPE="desktop"
+
+echo -e $header"Ubuntu $ISO_TYPE $MAJOR.$MINOR.$PATCH $ARCH"$reset
 echo -e $accent"============================"$reset
-echo -e $text"Downloading and verifying$header Ubuntu Desktop 17.10.1 amd64$text Install ISO image..."$reset
+echo -e $text"Downloading and verifying$header Ubuntu $ISO_TYPE $MAJOR.$MINOR.$PATCH $ARCH$text Install ISO image..."$reset
 
 mkdir -p /var/multiverse/images/os-images
 cd /var/multiverse/images/os-images
@@ -23,9 +31,9 @@ cd /var/multiverse/images/os-images
 # it will not need to be manually updated too often.
 
 # TODO: Check if the file is already downloaded, if it is, skip, and just validate
-wget http://releases.ubuntu.com/17.10.1/ubuntu-17.10.1-desktop-amd64.iso
-wget http://releases.ubuntu.com/17.10.1/SHA256SUMS
-wget http://releases.ubuntu.com/17.10.1/SHA256SUMS.gpg
+wget http://releases.ubuntu.com/$MAJOR.$MINOR.$PATCH/ubuntu-$MAJOR.$MINOR.$PATCH-$ISO_TYPE-$ARCH.iso
+wget http://releases.ubuntu.com/$MAJOR.$MINOR.$PATCH/SHA256SUMS
+wget http://releases.ubuntu.com/$MAJOR.$MINOR.$PATCH/SHA256SUMS.gpg
 echo -e $subheader"##  DOWNLOAD"$reset
 echo -e $text"Successfully downloaded (1) the ISO image, (2) checksum files, and"$reset
 echo -e $text"(3) checksum signature..."$reset
@@ -38,7 +46,7 @@ cat SHA256SUMS
 # TODO: In the improved version of this, we will actually do a _deep_ equals instead of relying
 # on the user to manually compare.
 echo -e $text"Executing 'sha256sum' on each file downloaded..."$reset
-sha256sum ubuntu-17.10.1-desktop-amd64.iso
+sha256sum ubuntu-$MAJOR.$MINOR.$PATCH-$ISO_TYPE-$ARCH.iso
 
 echo -e $text"Manually compare the values, and verify the checksums match..."$reset
 

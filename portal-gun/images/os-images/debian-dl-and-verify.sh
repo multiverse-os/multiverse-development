@@ -11,9 +11,24 @@ reset="\e[0m"
 
 start_dir=$(pwd)
 
-echo -e $header"Debian 9.7.0 amd64"$reset
+MAJOR="10"
+MINOR="2"
+PATCH="0"
+
+DL_PATH="$(pwd)"
+
+ISO_TYPE="netinst"
+
+ARCH="amd64"
+
+DEPS="dirmngr"
+
+sudo apt-get install $DEPS
+
+
+echo -e $header"Debian $MAJOR.$MINOR.$PATCH $ARCH"$reset
 echo -e $accent"=================="$reset
-echo -e $text"Downloading and verifying$header Debian 9.7.0$text Net Install ISO image..."$reset
+echo -e $text"Downloading and verifying$header Debian $MAJOR.$MINOR.$PATCH$text Net Install ISO image..."$reset
 
 mkdir -p /var/multiverse/images/os-images
 cd /var/multiverse/images/os-images
@@ -23,7 +38,7 @@ cd /var/multiverse/images/os-images
 # it will not need to be manually updated too often.
 
 # TODO: Check if the file is already downloaded, if it is, skip, and just validate
-wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-9.7.0-amd64-netinst.iso
+wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-$MAJOR.$MINOR.$PATCH-$ARCH-$ISO_TYPE.iso
 wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA256SUMS
 wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA256SUMS.sign
 
@@ -39,7 +54,7 @@ cat SHA256SUMS
 # TODO: In the improved version of this, we will actually do a _deep_ equals instead of relying
 # on the user to manually compare.
 echo -e $text"Executing 'sha256sum' on each file downloaded..."$reset
-sha256sum debian-9.7.0-amd64-netinst.iso
+sha256sum debian-$MAJOR.$MINOR.$PATCH-$ARCH-$ISO_TYPE.iso
 
 echo -e $text"Manually compare the values, and verify the checksums match..."$reset
 
@@ -56,8 +71,8 @@ echo -e "    the process by automating the steps, it is up to you to actually co
 echo -e "    the checksums and read the output of the gpg --verify command."$reset
 
 echo -e $text"Removing verification files..."$reset
-rm -f SHA256SUMS
-rm -f SHA256SUMS.sign
+#rm -f SHA256SUMS
+#rm -f SHA256SUMS.sign
 
 echo -e ""
 

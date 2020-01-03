@@ -62,12 +62,12 @@ OS_NAME="alpine"
 VERSION="standard"
 ARCHITECTURE="x86_64"
 MAJOR="3"
-MINOR="7"
-PATCH="0"
+MINOR="11"
+PATCH="2"
 BASE_URL="http://dl-cdn.alpinelinux.org/" # Do we have https?
 DL_URL="$BASE_URL/$OS_NAME/v$MAJOR.$MINOR/releases/$ARCHITECTURE/"
 
-FULL_VERSION="$MAJOR.$MINOR.$PATH"
+FULL_VERSION="$MAJOR.$MINOR.$PATCH"
 
 FILENAME="$OS_NAME-$VERSION-$FULL_VERSION-$ARCHITECTURE.iso"
 CHECKSUM_FILENAME="$FILENAME.sha256"
@@ -80,7 +80,7 @@ GPG_COMMAND="gpg"
 DEV_KEY_FILENAME="ncopa.asc"
 REMOTE_DEV_KEY="https://alpinelinux.org/keys/"$DEV_KEY_FILENAME
 
-DL_PATH="/var/multiverse/images/os-images" # Can we just use wd? or $(pwd)
+DL_PATH="$(pwd)" # Can we just use wd? or $(pwd)
 wd=$(pwd)
 
 ## TODO ########################################################################
