@@ -67,6 +67,30 @@ chmod +x /sys/devices/pci0000:b2/0000:b2:03.0/0000:b3:00.0/0000:b4:03.0/0000\:b5
 # TODO: This additionally should be done with udev and removed from here
 chown root:kvm /dev/disk/by-uuid/*
 
+## Profrmance Scaling 
+
+echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu8/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu9/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu10/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu11/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu12/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu13/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu14/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu15/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu16/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu17/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu18/cpufreq/scaling_governor
+echo "performance" > /sys/devices/system/cpu/cpu19/cpufreq/scaling_governor
+
+
 echo "================================================================================"
 echo "Execution of '/etc/rc.local' successful"
 
