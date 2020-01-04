@@ -1,5 +1,37 @@
 # Preformance Optimization Notes & Research
 
+## Use Q35 for the Controller
+
+## Nesting PCI Passhtrough Functionality
+
+
+Add CPU feature vmx (for intel)
+
+
+Under devices add 
+
+```
+<iommu model='intel'>
+  <driver intremap='on' caching_mode='on' iotlb='on'/>
+</iommu>
+```
+
+Add the following to grub kernel line (of the Controller):
+
+```
+iommu=pt intel_iommu=on
+```
+
+## Enable L3 Caching
+This one is a major preformance increase
+
+## CPU Pinning
+
+## Isolate CPUs
+
+## Define memory modules and make them unshared and private
+
+## Specify and Tune NUMA
 
 ## CPU Throttling 
 
