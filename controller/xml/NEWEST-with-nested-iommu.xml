@@ -1,0 +1,423 @@
+<domain type='kvm' id='15' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
+  <name>debian10.controller</name>
+  <uuid>1f4b16cc-84fe-4398-bd2e-ce53bb421dd7</uuid>
+  <memory unit='KiB'>29524992</memory>
+  <currentMemory unit='KiB'>29524992</currentMemory>
+  <memoryBacking>
+    <nosharepages/>
+  </memoryBacking>
+  <vcpu placement='static' cpuset='1-9,11-19'>18</vcpu>
+  <cputune>
+    <vcpupin vcpu='0' cpuset='1'/>
+    <vcpupin vcpu='1' cpuset='11'/>
+    <vcpupin vcpu='2' cpuset='2'/>
+    <vcpupin vcpu='3' cpuset='12'/>
+    <vcpupin vcpu='4' cpuset='3'/>
+    <vcpupin vcpu='5' cpuset='13'/>
+    <vcpupin vcpu='6' cpuset='4'/>
+    <vcpupin vcpu='7' cpuset='14'/>
+    <vcpupin vcpu='8' cpuset='5'/>
+    <vcpupin vcpu='9' cpuset='15'/>
+    <vcpupin vcpu='10' cpuset='6'/>
+    <vcpupin vcpu='11' cpuset='16'/>
+    <vcpupin vcpu='12' cpuset='7'/>
+    <vcpupin vcpu='13' cpuset='17'/>
+    <vcpupin vcpu='14' cpuset='8'/>
+    <vcpupin vcpu='15' cpuset='18'/>
+    <vcpupin vcpu='16' cpuset='9'/>
+    <vcpupin vcpu='17' cpuset='19'/>
+  </cputune>
+  <os>
+    <type arch='x86_64' machine='pc-q35-2.8'>hvm</type>
+    <loader readonly='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE.fd</loader>
+    <nvram>/home/user/.config/libvirt/qemu/nvram/debian10.controller_VARS.fd</nvram>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <hap state='on'/>
+    <kvm>
+      <hidden state='on'/>
+    </kvm>
+    <pmu state='off'/>
+    <vmport state='off'/>
+  </features>
+  <cpu mode='host-passthrough'>
+    <topology sockets='1' cores='9' threads='2'/>
+    <feature policy='disable' name='lahf_lm'/>
+    <feature policy='require' name='vmx'/>
+    <feature policy='require' name='cx8'/>
+    <feature policy='require' name='msr'/>
+    <feature policy='require' name='tsc'/>
+    <feature policy='require' name='pae'/>
+    <feature policy='require' name='mce'/>
+    <feature policy='require' name='sep'/>
+    <feature policy='require' name='tm'/>
+    <feature policy='require' name='syscall'/>
+    <feature policy='require' name='pts'/>
+    <feature policy='require' name='pge'/>
+    <feature policy='require' name='mtrr'/>
+    <feature policy='require' name='fma'/>
+    <feature policy='require' name='vnmi'/>
+    <feature policy='require' name='shadow'/>
+    <feature policy='require' name='flexpriority'/>
+    <feature policy='require' name='est'/>
+    <feature policy='require' name='f16c'/>
+    <feature policy='require' name='ida'/>
+    <feature policy='require' name='arat'/>
+    <feature policy='require' name='pln'/>
+    <feature policy='require' name='pebs'/>
+    <feature policy='require' name='pcid'/>
+    <feature policy='require' name='dca'/>
+    <feature policy='require' name='movebe'/>
+    <feature policy='require' name='fpu'/>
+    <feature policy='require' name='epb'/>
+    <feature policy='require' name='pse'/>
+    <feature policy='require' name='pse36'/>
+    <feature policy='require' name='bmi2'/>
+    <feature policy='require' name='rtm'/>
+    <feature policy='require' name='lm'/>
+    <feature policy='require' name='avx2'/>
+    <feature policy='require' name='apic'/>
+    <feature policy='require' name='mmx'/>
+    <feature policy='require' name='aes'/>
+    <feature policy='require' name='nx'/>
+    <feature policy='require' name='pdpe1gb'/>
+    <feature policy='require' name='clflush'/>
+    <feature policy='require' name='vme'/>
+    <feature policy='require' name='ss'/>
+    <feature policy='require' name='avx'/>
+    <feature policy='require' name='hle'/>
+    <feature policy='require' name='erms'/>
+    <feature policy='require' name='xsave'/>
+    <feature policy='require' name='hypervisor'/>
+    <feature policy='require' name='cx16'/>
+    <feature policy='require' name='popcnt'/>
+    <feature policy='require' name='movbe'/>
+    <feature policy='require' name='sse2'/>
+    <feature policy='require' name='ssse3'/>
+    <feature policy='require' name='sse4.1'/>
+    <feature policy='require' name='sse4.2'/>
+  </cpu>
+  <clock offset='utc'>
+    <timer name='hpet' present='yes'/>
+    <timer name='kvmclock' present='yes'/>
+    <timer name='rtc' present='yes' track='wall'/>
+    <timer name='pit' tickpolicy='discard'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>restart</on_crash>
+  <pm>
+    <suspend-to-mem enabled='yes'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/kvm</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' cache='none' io='threads'/>
+      <source file='/var/multiverse/portals/disks/debian10.controller.qcow2'/>
+      <backingStore/>
+      <target dev='vda' bus='virtio'/>
+      <alias name='virtio-disk0'/>
+      <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
+    </disk>
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none'/>
+      <source dev='/dev/disk/by-uuid/81040f77-65da-4644-8d76-a625e5086cb0'/>
+      <backingStore/>
+      <target dev='sdb' bus='virtio'/>
+      <alias name='virtio-disk1'/>
+      <address type='pci' domain='0x0000' bus='0x0a' slot='0x00' function='0x0'/>
+    </disk>
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none'/>
+      <source dev='/dev/disk/by-uuid/022bd185-eab7-4faf-96ac-b3e74ecc9f65'/>
+      <backingStore/>
+      <target dev='sdc' bus='virtio'/>
+      <alias name='virtio-disk2'/>
+      <address type='pci' domain='0x0000' bus='0x0b' slot='0x00' function='0x0'/>
+    </disk>
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none'/>
+      <source dev='/dev/disk/by-uuid/7bf23688-00b7-4e68-adf3-141453ce6899'/>
+      <backingStore/>
+      <target dev='sdd' bus='virtio'/>
+      <alias name='virtio-disk3'/>
+      <address type='pci' domain='0x0000' bus='0x0c' slot='0x00' function='0x0'/>
+    </disk>
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none'/>
+      <source dev='/dev/disk/by-uuid/735bcd84-3306-48c7-b5a7-774ea11d8a81'/>
+      <backingStore/>
+      <target dev='sde' bus='virtio'/>
+      <alias name='virtio-disk4'/>
+      <address type='pci' domain='0x0000' bus='0x0d' slot='0x00' function='0x0'/>
+    </disk>
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none'/>
+      <source dev='/dev/disk/by-uuid/8efad1a2-d5a3-413c-ac27-c0b1524d7064'/>
+      <backingStore/>
+      <target dev='sdf' bus='virtio'/>
+      <alias name='virtio-disk5'/>
+      <address type='pci' domain='0x0000' bus='0x0e' slot='0x00' function='0x0'/>
+    </disk>
+    <disk type='block' device='disk'>
+      <driver name='qemu' type='raw' cache='none'/>
+      <source dev='/dev/disk/by-uuid/ef0b265a-2406-4e68-93d4-860be8362808'/>
+      <backingStore/>
+      <target dev='sdg' bus='virtio'/>
+      <alias name='virtio-disk6'/>
+      <address type='pci' domain='0x0000' bus='0x0f' slot='0x00' function='0x0'/>
+    </disk>
+    <controller type='usb' index='0' model='ich9-ehci1'>
+      <alias name='usb'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1d' function='0x7'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci1'>
+      <alias name='usb'/>
+      <master startport='0'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1d' function='0x0' multifunction='on'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci2'>
+      <alias name='usb'/>
+      <master startport='2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1d' function='0x1'/>
+    </controller>
+    <controller type='usb' index='0' model='ich9-uhci3'>
+      <alias name='usb'/>
+      <master startport='4'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1d' function='0x2'/>
+    </controller>
+    <controller type='sata' index='0'>
+      <alias name='ide'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
+    </controller>
+    <controller type='pci' index='0' model='pcie-root'>
+      <alias name='pcie.0'/>
+    </controller>
+    <controller type='pci' index='1' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='1' port='0x10'/>
+      <alias name='pci.1'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0' multifunction='on'/>
+    </controller>
+    <controller type='pci' index='2' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='2' port='0x11'/>
+      <alias name='pci.2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x1'/>
+    </controller>
+    <controller type='pci' index='3' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='3' port='0x12'/>
+      <alias name='pci.3'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x2'/>
+    </controller>
+    <controller type='pci' index='4' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='4' port='0x13'/>
+      <alias name='pci.4'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x3'/>
+    </controller>
+    <controller type='pci' index='5' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='5' port='0x14'/>
+      <alias name='pci.5'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x4'/>
+    </controller>
+    <controller type='pci' index='6' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='6' port='0x15'/>
+      <alias name='pci.6'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x5'/>
+    </controller>
+    <controller type='pci' index='7' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='7' port='0x16'/>
+      <alias name='pci.7'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x6'/>
+    </controller>
+    <controller type='pci' index='8' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='8' port='0x8'/>
+      <alias name='pci.8'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0' multifunction='on'/>
+    </controller>
+    <controller type='pci' index='9' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='9' port='0x9'/>
+      <alias name='pci.9'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
+    </controller>
+    <controller type='pci' index='10' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='10' port='0xa'/>
+      <alias name='pci.10'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x2'/>
+    </controller>
+    <controller type='pci' index='11' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='11' port='0xb'/>
+      <alias name='pci.11'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x3'/>
+    </controller>
+    <controller type='pci' index='12' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='12' port='0xc'/>
+      <alias name='pci.12'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x4'/>
+    </controller>
+    <controller type='pci' index='13' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='13' port='0xd'/>
+      <alias name='pci.13'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x5'/>
+    </controller>
+    <controller type='pci' index='14' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='14' port='0xe'/>
+      <alias name='pci.14'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x6'/>
+    </controller>
+    <controller type='pci' index='15' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='15' port='0xf'/>
+      <alias name='pci.15'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x7'/>
+    </controller>
+    <controller type='pci' index='16' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='16' port='0x17'/>
+      <alias name='pci.16'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x7'/>
+    </controller>
+    <controller type='pci' index='17' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='17' port='0x18'/>
+      <alias name='pci.17'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0' multifunction='on'/>
+    </controller>
+    <controller type='pci' index='18' model='dmi-to-pci-bridge'>
+      <model name='i82801b11-bridge'/>
+      <alias name='pci.18'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1e' function='0x0'/>
+    </controller>
+    <controller type='pci' index='19' model='pci-bridge'>
+      <model name='pci-bridge'/>
+      <target chassisNr='19'/>
+      <alias name='pci.19'/>
+      <address type='pci' domain='0x0000' bus='0x12' slot='0x00' function='0x0'/>
+    </controller>
+    <controller type='pci' index='20' model='pcie-root-port'>
+      <model name='ioh3420'/>
+      <target chassis='20' port='0x19'/>
+      <alias name='pci.20'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x1'/>
+    </controller>
+    <controller type='virtio-serial' index='0'>
+      <alias name='virtio-serial0'/>
+      <address type='pci' domain='0x0000' bus='0x02' slot='0x00' function='0x0'/>
+    </controller>
+    <filesystem type='mount' accessmode='mapped'>
+      <driver type='path' wrpolicy='immediate'/>
+      <source dir='/home/user/multiverse'/>
+      <target dir='multiverse'/>
+      <alias name='fs0'/>
+      <address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
+    </filesystem>
+    <filesystem type='mount' accessmode='mapped'>
+      <driver type='path' wrpolicy='immediate'/>
+      <source dir='/var/multiverse'/>
+      <target dir='hostmultiverse'/>
+      <alias name='fs1'/>
+      <address type='pci' domain='0x0000' bus='0x11' slot='0x00' function='0x0'/>
+    </filesystem>
+    <interface type='bridge'>
+      <mac address='00:00:10:01:01:05'/>
+      <source bridge='net0br1'/>
+      <target dev='tap9'/>
+      <model type='virtio'/>
+      <alias name='net0'/>
+      <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
+    </interface>
+    <interface type='bridge'>
+      <mac address='00:00:10:06:06:05'/>
+      <source bridge='net1br1'/>
+      <target dev='tap10'/>
+      <model type='virtio'/>
+      <alias name='net1'/>
+      <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
+    </interface>
+    <interface type='bridge'>
+      <mac address='00:00:10:11:11:05'/>
+      <source bridge='net2br1'/>
+      <target dev='tap11'/>
+      <model type='virtio'/>
+      <alias name='net2'/>
+      <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>
+    </interface>
+    <serial type='unix'>
+      <source mode='bind' path='/var/multiverse/portals/sockets/debian10-controller.sock'/>
+      <target port='0'/>
+      <alias name='serial0'/>
+    </serial>
+    <console type='unix'>
+      <source mode='bind' path='/var/multiverse/portals/sockets/debian10-controller.sock'/>
+      <target type='serial' port='0'/>
+      <alias name='serial0'/>
+    </console>
+    <channel type='unix'>
+      <source mode='bind' path='/home/user/.config/libvirt/qemu/channel/target/domain-15-debian10.controller/host.multiverse'/>
+      <target type='virtio' name='host.multiverse' state='disconnected'/>
+      <alias name='channel0'/>
+      <address type='virtio-serial' controller='0' bus='0' port='1'/>
+    </channel>
+    <input type='mouse' bus='ps2'>
+      <alias name='input0'/>
+    </input>
+    <input type='keyboard' bus='ps2'>
+      <alias name='input1'/>
+    </input>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <driver name='vfio'/>
+      <source>
+        <address domain='0x0000' bus='0x19' slot='0x00' function='0x0'/>
+      </source>
+      <alias name='hostdev0'/>
+      <address type='pci' domain='0x0000' bus='0x08' slot='0x00' function='0x0'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <driver name='vfio'/>
+      <source>
+        <address domain='0x0000' bus='0x19' slot='0x00' function='0x1'/>
+      </source>
+      <alias name='hostdev1'/>
+      <address type='pci' domain='0x0000' bus='0x09' slot='0x00' function='0x0'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <driver name='vfio'/>
+      <source>
+        <address domain='0x0000' bus='0x00' slot='0x14' function='0x0'/>
+      </source>
+      <alias name='hostdev2'/>
+      <address type='pci' domain='0x0000' bus='0x13' slot='0x01' function='0x0'/>
+    </hostdev>
+    <memballoon model='virtio'>
+      <alias name='balloon0'/>
+      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+    </memballoon>
+  </devices>
+  <seclabel type='none' model='none'/>
+  <qemu:commandline>
+    <qemu:arg value='-cpu'/>
+    <qemu:arg value='host,l3-cache=on'/>
+    <qemu:arg value='-machine'/>
+    <qemu:arg value='accel=kvm,kernel_irqchip=split'/>
+    <qemu:arg value='-enable-kvm'/>
+    <qemu:arg value='-device'/>
+    <qemu:arg value='intel-iommu,intremap=on'/>
+  </qemu:commandline>
+</domain>
+

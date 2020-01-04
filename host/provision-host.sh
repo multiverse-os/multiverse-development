@@ -12,12 +12,23 @@ sudo apt-get remove nano minissdpd
 
 ## Default Paths
 # NOTE: Not a fan of os-images under images maybe os-installation or os-media or just os
+# These /images will probably just end up in portal-gun or portals
 sudo mkdir -p /var/multiverse/images/os-images
 sudo mkdir -p /var/multiverse/images/portal-disks
-sudo mkdir -p /var/multiverse/portals/ # each portal type containing its own share socket, etc
-sudo mkdir -p /var/multiverse/portal/shares
-sudo mkdir -p /var/multiverse/portal/sockets
-sudo mkdir -p /var/multiverse/portal/channels
+# each portal type containing its own share socket, etc. Just copy from git
+sudo mkdir -p /var/multiverse/portal-gun/ 
+# TODO: Not a fan of "shares" these are plan9 shares, we are already modifying
+# a copy of p9 server and client for a custom disk type and so shares will not
+# really adequately describe the new disk type. IT will provide essentailly a 
+# temporary or long term disk shared across VMs of the same type for setup or
+# continued operation
+sudo mkdir -p /var/multiverse/portals/shares
+sudo mkdir -p /var/multiverse/portals/disks
+sudo mkdir -p /var/multiverse/portals/sockets/serial/
+sudo mkdir -p /var/multiverse/portals/sockets/channel/
+sudo mkdir -p /var/multiverse/portals/sockets/console/
+sudo mkdir -p /var/multiverse/portals/sockets/parallel/
+# This is where we will store multiverse.conf or multiverse.yaml, and it will define a lot of the multiverse host configuration that will allow the user to change various multiverse settings
 sudo mkdir -p /etc/multiverse
 
 # Because for not default always gets created, so lets link it to our primary default
