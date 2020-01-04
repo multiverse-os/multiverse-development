@@ -20,6 +20,10 @@ sudo mkdir -p /var/multiverse/portal/sockets
 sudo mkdir -p /var/multiverse/portal/channels
 sudo mkdir -p /etc/multiverse
 
+# Because for not default always gets created, so lets link it to our primary default
+rm ~/.local/share/libvirt/images
+ln -s /var/multiverse/portals/disks/ ~/.local/share/libvirt/images
+
 ## User
 cd /home/user && rm -rf Desktop Downloads Documents Music Videos Pictures 
 

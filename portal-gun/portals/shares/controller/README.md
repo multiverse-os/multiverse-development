@@ -1,25 +1,40 @@
-# Multiverse OS: Controllers
-The Multiverse OS controller portals (VMs) are specialized hypervisor VMs
-providing all their functionality as nested VMs isolated using full-virtualized
-and para-virtualized machines, with further layers of isolation using VMs and
-containers. 
+# Controller Virtual Machine
 
-The current design has two (2) types of hypervisor VMs running on the Host:
+The **Controller VM** is the machine that functions as the interface for user interaction because in Multiverse OS the bare-metal host machine is completely inaccessible. All user interaction takes place within a virtual machine.
 
-
-  (1) **Network (Router) Controller**
-
-  (2) **(User) Interface Controller**
+#### Filesystem Passthrough
+The Controller VM requires two kernel modules to boot without errors:
 
 
-*Multiple of each type can run on a host. Eventually these may be further
-nested into a single hypervisor VM in order to contain the entire logic in a
-single package.*
+#### Provisioning Controller VM
+The foundation of every controlleris the same, then from the foundation, modifications are made to fulfill the specific requirements of the type of controller, for example a gaming controller would have steam installed by default.
 
-_______________________________________________________________________________
-## General Controller Configuration
-This is the configuration that is necessary across all types of controllers, 
-both networking and user interface.
+To begin creating a foundational Debian/Ubuntu ControllerVM template some base packages need to be setup on the controller VM
+
+```
+sudo apt-get install vim tor ovmf virt-manager xpra python-netifaces
+```
+
+Then nano should be removed to shift vim to the default
+
+```
+sudo apt-get remove nano
+```
+
+Because the Controller VM runs nested Application VMs inside of it, we need some basics setup for launching virtual machines:
+
+```
+virbr0 with ip address range 10.10.10.0/24
+virbr1 with ip address range 10.11.11.0/24
+virbr2 with ip address range 10.12.12.0/24
+```
+
+And storage pools need to be setup:
+
+```
+'images' for HD images
+'os-images' for os images
+```
 
 For mounting a 9p folder without erroring at the startup, modify 
 `/etc/initramfs-tools/modules` and add the following modules:
@@ -31,96 +46,74 @@ For mounting a 9p folder without erroring at the startup, modify
 9pnet_virtio
 ```
 
-This will allow unpriviledged mounting of p9 share folders.
+#### Setting up Xpra
+Seamless access to applications launched within Application VMs is done using currently using `xpra` (until we can build a solution that uses /dev/shm between VMs). 
 
-**TODO: Put in XML for clock, cpu, memory, etc**
+We want to use the beta version of `xpra`, the best way to obtain this is using the `xpra` apt repositories. 
 
-_______________________________________________________________________________
+```
+wget -qO - https://xpra.org/gpg.asc | apt-key add -
+cd /etc/apt/sources.list.d/
+wget https://xpra.org/repos/buster/xpra.list
+```
 
+Once the repositories are installed run `sudo apt-get update` then install `xpra` and other packages necessary that are dependencies but don't get installed automatically. 
 
-# Multiverse OS: (User) Interface Controllers
-Eventually, Multiverse OS Interface controllers should contain each variation
-within the controller interface, that way we do not need 5 differnet Ubuntu17
-servers for example, instead we just need 1 and have 5 different profiles that
-can be launched. 
+```
+sudo apt-get install xpra python-netifaces python-pip python-cups
 
-# Multiverse OS Default HOST Controllers
+pip install numpy
+pip install pyinotify
+pip install opencv-python
+pip install pyopengl
+pip install pyopengl-accelerate
+```
+#### GPU Passthrough
+If the Multivesre OS host is not being used as a sattalite Multiverse OS install then the GPU must be passed through to the Controller VM. 
 
+**NOTE** A Satallite Multiverse OS install is a headless install, or an install on a computer that does not have a keyboard/mouse plugged in, or a server, or in other words not directly used but instead provides resources and joins a Multiverse OS super computer cluster to empower normal Multiverse OS installations. Sattalite installations can provide resources to both you and your friends, the resources can be shared and the system is designed to isolate and secure your software completely from any other users sharing resources on the satallite machine.
 
+Keep in mind, that when doing GPU passthrough, you must install the video card driver **before** you actually pass through the card (at least the open source version, such as `nouveau` or `amd-gpu`). 
 
-### Alpine based controller
+After the driver is installed, then you can passthrough the GPU PCI devices and isolate all your user activity inside of the Multiverse OS Controller VM.
 
-## Setup the 
+**DEVELOPMENT** Infact, we should just detect what is the make of the card and ensure the appropraite `nouveau` driver, `amd-gpu` or available `nvidia-*` driver is (in the case of Ubuntu based Controller VMs). 
 
-libvirt
-libvirt-daemon
-qemu
-qemu-system-x86_64
+##### AMD
+First step is adding `non-free` to the `/etc/apt/source.list` file
 
-qemu-img
-#dev
-vim 
+```
+deb http://ftp.us.debian.org/debian/ buster main non-free
+deb-src http://ftp.us.debian.org/debian/ buster main non-free
 
-rc-update add libvirtd
-______
-### XML 
+deb http://security.debian.org/debian-security buster/updates main non-free
+deb-src http://security.debian.org/debian-security buster/updates main non-free
 
+# buster-updates, previously known as 'volatile'
+deb http://ftp.us.debian.org/debian/ buster-updates main non-free
+deb-src http://ftp.us.debian.org/debian/ buster-updates main non-free
 
-**Attribute: <seclabel>**
-[resource](red_hat_enterprise_6_20.20)
+```
 
+Then the firmware can be installed:
 
-# USER Controller VM - Agent/Daemon Service
-### User Interface (UI) to Multiverse OS
-The following is the roadmap to design and develop the USER CONTROLLER VM
-agent/daemon process that will always run and manage backgorund tasks to
-facilitate the ui to Multiverse OS.
+```
+sudo apt-get update
+sudo apt-get install firmware-amd-graphics xserver-xorg-video-amdgpu
+```
 
-
-# Controller Agent 
-
-
- [1][The agent should guarantee settings are correct and if they are modified to settings that would cause failure, the setting changed should be auto revereted to the known defaults]
-  [Controller Default Settings]:
-    * `user` should be in groups: [`kvm`, `libvirt`, `libvirt-dbus`]
-
-````
-      sudo usermod -a -G libvirt user
-      sudo usermod -a -G kvm user
-````
-
-### Notes/Research/Scratch
-
-  [*][Get rid of virt-manager] Its super easy to add images for exampe:
-     `virsh attach-disk Guest1 /var/lib/vlibvirt/imgaes/FileName.img sbd`
-
-### Entropy / RNG
-
-  * rngd -b -r /dev/hwrng/ -o /dev/random/
+Finally shut down the machine, remove the QXL/Spice devices and switch the the AMD passed through PCI GPU.
 
 
-### Functional Requirements
+#### Feature Brainstorming 
+Below are a list of potential features that can be implemented to improve and extend the functionality of the Controller VM.
 
-### Key Libraries
+  * Gnome extenions to interact with the **Router VMs** seamlessly.
 
-  * [Packages within the libguestfs suite]
-    [url][libguestfs.org = has a list of all sub-projects/modules that make up the libguestfs package suite. has things like extract windows registry, convert guest to kvm (v2v somehow), format, get kernel from disk,  etc] set of tools for afcessing modifying vm disk images (could be the basis for auto shrinking and growing VM hds! obivously auto back up too silly)
-        [*] monitor disk usage
-        [*] creating guests
-        [*] **SCRIPTING CHANGES TO VMs** (this is what we would use to fucking auto shrink and grow!!!!)
-     * backups
-     * formating
-     *reziing (!!)
-     * Cloning
-     * Building
-     * V2V?
-     * P2V?
-     * __editing files inside Guests and viewing__
+  * Fallback version that functions with very limited resources to repair any issues with the other Controller VMs
 
 
-    [SUB PACKAGES] the ones that jumped out to me becuse we wnated to do things like save a version (auto vM image versioning/snapshots, KEEP IN MIND using a system where the user files are segregated from the standard OS files
 
+## NOTES
 
-### Roadmap
-
-
+Should be debian9-7
