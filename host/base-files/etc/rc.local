@@ -68,27 +68,78 @@ chmod +x /sys/devices/pci0000:b2/0000:b2:03.0/0000:b3:00.0/0000:b4:03.0/0000\:b5
 chown root:kvm /dev/disk/by-uuid/*
 
 ## Profrmance Scaling 
+#echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu8/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu9/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu10/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu11/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu12/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu13/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu14/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu15/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu16/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu17/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu18/cpufreq/scaling_governor
+#echo "performance" > /sys/devices/system/cpu/cpu19/cpufreq/scaling_governor
+
+
+#########################################################################################
+## Performance Scaling                                                                 ##
+#########################################################################################
+# TODO: Seems like this should be doable in sysctl.conf. This is a very hack solution.
 
 echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu6/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu7/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu8/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu8/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu9/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu9/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu10/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu10/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu11/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu11/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu12/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu12/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu13/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu13/cpufreq/cpuinfo_cur_freq
+
 echo "performance" > /sys/devices/system/cpu/cpu14/cpufreq/scaling_governor
-echo "performance" > /sys/devices/system/cpu/cpu15/cpufreq/scaling_governor
-echo "performance" > /sys/devices/system/cpu/cpu16/cpufreq/scaling_governor
-echo "performance" > /sys/devices/system/cpu/cpu17/cpufreq/scaling_governor
-echo "performance" > /sys/devices/system/cpu/cpu18/cpufreq/scaling_governor
-echo "performance" > /sys/devices/system/cpu/cpu19/cpufreq/scaling_governor
+echo "3210156" > /sys/devices/system/cpu/cpu14/cpufreq/cpuinfo_cur_freq
+
 
 
 echo "================================================================================"

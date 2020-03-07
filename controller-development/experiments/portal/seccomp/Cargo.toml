@@ -1,7 +1,0 @@
-[package]
-name = "seccomp"
-version = "0.1.0"
-authors = [""]
-
-[dependencies]
-libc = ">=0.2.39"
