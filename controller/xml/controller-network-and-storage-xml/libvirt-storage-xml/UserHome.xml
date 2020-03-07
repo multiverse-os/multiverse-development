@@ -1,0 +1,19 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh pool-edit UserHome
+or other application using the libvirt API.
+-->
+
+<pool type='dir'>
+  <name>UserHome</name>
+  <uuid>6fe38c87-4467-487a-9c5f-631b68922a00</uuid>
+  <capacity unit='bytes'>0</capacity>
+  <allocation unit='bytes'>0</allocation>
+  <available unit='bytes'>0</available>
+  <source>
+  </source>
+  <target>
+    <path>/home/user</path>
+  </target>
+</pool>

@@ -1,0 +1,19 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh pool-edit VaultMedia
+or other application using the libvirt API.
+-->
+
+<pool type='dir'>
+  <name>VaultMedia</name>
+  <uuid>b9ffacb4-5c07-4b79-8d1a-18ca65b67c29</uuid>
+  <capacity unit='bytes'>0</capacity>
+  <allocation unit='bytes'>0</allocation>
+  <available unit='bytes'>0</available>
+  <source>
+  </source>
+  <target>
+    <path>/media/user/Vault/Media</path>
+  </target>
+</pool>

@@ -1,0 +1,23 @@
+[package]
+name = "devices"
+version = "0.1.0"
+authors = [""]
+edition = "2018"
+
+[dependencies]
+byteorder = ">=1.2.1"
+epoll = "=4.0.1"
+libc = ">=0.2.39"
+
+dumbo = { path = "../dumbo" }
+portal_util = { path = "../portal_util" }
+logger = { path = "../logger" }
+memory_model = { path = "../memory_model" }
+net_util = { path = "../net_util" }
+net_gen = { path = "../net_gen" }
+rate_limiter = { path = "../rate_limiter" }
+sys_util = { path = "../sys_util" }
+virtio_gen = { path = "../virtio_gen" }
+
+[dev-dependencies]
+tempfile = ">=3.0.2"

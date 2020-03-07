@@ -1,0 +1,16 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh net-edit galleon1
+or other application using the libvirt API.
+-->
+
+<network>
+  <name>galleon1</name>
+  <uuid>e7a63a69-d1c5-48a2-adf8-4ad8c9ed8668</uuid>
+  <bridge name='galleon1' stp='on' delay='0'/>
+  <mac address='10:02:55:02:55:88'/>
+  <domain name='galleon1'/>
+  <ip address='10.254.254.1' netmask='255.255.255.0'>
+  </ip>
+</network>

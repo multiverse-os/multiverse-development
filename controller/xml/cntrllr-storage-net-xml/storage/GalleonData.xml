@@ -1,0 +1,19 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh pool-edit GalleonData
+or other application using the libvirt API.
+-->
+
+<pool type='dir'>
+  <name>GalleonData</name>
+  <uuid>856d4cd6-39a7-4b9c-a152-430edb850c0d</uuid>
+  <capacity unit='bytes'>0</capacity>
+  <allocation unit='bytes'>0</allocation>
+  <available unit='bytes'>0</available>
+  <source>
+  </source>
+  <target>
+    <path>/media/user/MultiverseData/Galleon</path>
+  </target>
+</pool>

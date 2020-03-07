@@ -1,1 +1,2 @@
+# Grant /dev/vfio ownership to root:libvirt
 SUBSYSTEM=="vfio" OWNER="root" GROUP="libvirt" MODE="0660"

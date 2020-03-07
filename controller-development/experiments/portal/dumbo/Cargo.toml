@@ -1,0 +1,13 @@
+[package]
+name = "dumbo"
+version = "0.1.0"
+authors = [""]
+
+[dependencies]
+bitflags = ">=1.0.4"
+byteorder = ">=1.2.1"
+
+portal_util = { path = "../portal_util" }
+logger = { path = "../logger" }
+mmds = { path = "../mmds" }
+net_util = { path = "../net_util" }

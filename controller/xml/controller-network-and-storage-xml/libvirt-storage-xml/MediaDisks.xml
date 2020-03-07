@@ -1,0 +1,19 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh pool-edit MediaDisks
+or other application using the libvirt API.
+-->
+
+<pool type='dir'>
+  <name>MediaDisks</name>
+  <uuid>50687b52-5291-484c-84a8-3e8cad9285be</uuid>
+  <capacity unit='bytes'>0</capacity>
+  <allocation unit='bytes'>0</allocation>
+  <available unit='bytes'>0</available>
+  <source>
+  </source>
+  <target>
+    <path>/media/user</path>
+  </target>
+</pool>

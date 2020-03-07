@@ -1,0 +1,19 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh pool-edit MultiverseVMs
+or other application using the libvirt API.
+-->
+
+<pool type='dir'>
+  <name>MultiverseVMs</name>
+  <uuid>9b57271a-ae40-409e-8a0c-acff4fe7f4b1</uuid>
+  <capacity unit='bytes'>0</capacity>
+  <allocation unit='bytes'>0</allocation>
+  <available unit='bytes'>0</available>
+  <source>
+  </source>
+  <target>
+    <path>/media/user/MultiverseVMs</path>
+  </target>
+</pool>

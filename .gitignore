@@ -36,3 +36,5 @@ data/
 
 # Libvirtd socket (should be reinitialized via script)
 libvirtd-socket/* 
+
+devbackup

@@ -1,0 +1,19 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh pool-edit VarMultiverse
+or other application using the libvirt API.
+-->
+
+<pool type='dir'>
+  <name>VarMultiverse</name>
+  <uuid>40233959-91ae-41ce-869f-9d38c8ed3ea6</uuid>
+  <capacity unit='bytes'>0</capacity>
+  <allocation unit='bytes'>0</allocation>
+  <available unit='bytes'>0</available>
+  <source>
+  </source>
+  <target>
+    <path>/var/multiverse</path>
+  </target>
+</pool>
