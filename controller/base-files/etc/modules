@@ -1,14 +1,13 @@
 # /etc/modules: kernel modules to load at boot time.
-
-#
+###############################################################################
 # Multiverse OS Modules
 ###############################################################################
-# Plan9 Shares
+## Plan9 Shares
 9p 
 9pnet
 9pnet_virtio
 
-# IOMMU
+## PCI Passthrough (IOMMU)
 vfio
 vfio_iommu_type1
 vfio_pci
