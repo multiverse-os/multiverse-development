@@ -13,11 +13,11 @@ start_dir=$(pwd)
 
 MAJOR="18"
 MINOR="04"
-PATCH="3"
+PATCH="4"
 
 ARCH="amd64"
 
-ISO_TYPE="desktop"
+ISO_TYPE="live-server"
 
 echo -e $header"Ubuntu $ISO_TYPE $MAJOR.$MINOR.$PATCH $ARCH"$reset
 echo -e $accent"============================"$reset
@@ -56,7 +56,7 @@ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys "8439 38DF 228D 22F7 B374
 
 
 echo -e $text"Verifying the signature file with the Ubuntu developer release key..."$reset
-gpg --verify SHA256SUMS.gpg
+gpg --verify SHA256SUMS.gpg SHA256SUMS
 
 echo -e $header"\n    **NOTE** This script is simple and does not actually do comparisons, it simplifies"
 echo -e "    the process by automating the steps, it is up to you to actually compare"

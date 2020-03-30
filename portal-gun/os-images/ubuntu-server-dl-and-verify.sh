@@ -1,5 +1,5 @@
 #!/bin/sh
-###############################################################################
+
 # Multiverse OS Script Color Palette
 header="\e[0;95m"
 accent="\e[37m"
@@ -11,24 +11,17 @@ reset="\e[0m"
 
 start_dir=$(pwd)
 
-MAJOR="10"
-MINOR="3"
-PATCH="0"
-
-DL_PATH="$(pwd)"
-
-ISO_TYPE="netinst"
+MAJOR="18"
+MINOR="04"
+PATCH="4"
 
 ARCH="amd64"
 
-DEPS="dirmngr"
+ISO_TYPE="desktop"
 
-sudo apt-get install $DEPS
-
-
-echo -e $header"Debian $MAJOR.$MINOR.$PATCH $ARCH"$reset
-echo -e $accent"=================="$reset
-echo -e $text"Downloading and verifying$header Debian $MAJOR.$MINOR.$PATCH$text Net Install ISO image..."$reset
+echo -e $header"Ubuntu $ISO_TYPE $MAJOR.$MINOR.$PATCH $ARCH"$reset
+echo -e $accent"============================"$reset
+echo -e $text"Downloading and verifying$header Ubuntu $ISO_TYPE $MAJOR.$MINOR.$PATCH $ARCH$text Install ISO image..."$reset
 
 mkdir -p /var/multiverse/images/os-images
 cd /var/multiverse/images/os-images
@@ -38,10 +31,9 @@ cd /var/multiverse/images/os-images
 # it will not need to be manually updated too often.
 
 # TODO: Check if the file is already downloaded, if it is, skip, and just validate
-wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-$MAJOR.$MINOR.$PATCH-$ARCH-$ISO_TYPE.iso
-wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA256SUMS
-wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA256SUMS.sign
-
+wget http://releases.ubuntu.com/$MAJOR.$MINOR.$PATCH/ubuntu-$MAJOR.$MINOR.$PATCH-$ISO_TYPE-$ARCH.iso
+wget http://releases.ubuntu.com/$MAJOR.$MINOR.$PATCH/SHA256SUMS
+wget http://releases.ubuntu.com/$MAJOR.$MINOR.$PATCH/SHA256SUMS.gpg
 echo -e $subheader"##  DOWNLOAD"$reset
 echo -e $text"Successfully downloaded (1) the ISO image, (2) checksum files, and"$reset
 echo -e $text"(3) checksum signature..."$reset
@@ -54,25 +46,25 @@ cat SHA256SUMS
 # TODO: In the improved version of this, we will actually do a _deep_ equals instead of relying
 # on the user to manually compare.
 echo -e $text"Executing 'sha256sum' on each file downloaded..."$reset
-sha256sum debian-$MAJOR.$MINOR.$PATCH-$ARCH-$ISO_TYPE.iso
+sha256sum ubuntu-$MAJOR.$MINOR.$PATCH-$ISO_TYPE-$ARCH.iso
 
 echo -e $text"Manually compare the values, and verify the checksums match..."$reset
 
 echo -e $subheader"##  SIGNATURES"$reset
-echo -e $text"Downloading the Debian developer release key to verify the signature..."$reset
-gpg --keyserver keyring.debian.org --recv 6294BE9B
+echo -e $text"Downloading the Ubuntu developer release key to verify the signature..."$reset
+gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys "8439 38DF 228D 22F7 B374 2BC0 D94A A3F0 EFE2 1092" "C598 64BF 1257 FFA8 6632 CBA7 4618 1433 FBB7 5451"
 
 
-echo -e $text"Verifying the signature file with the Debian developer release key..."$reset
-gpg --verify SHA256SUMS.sign
+echo -e $text"Verifying the signature file with the Ubuntu developer release key..."$reset
+gpg --verify SHA256SUMS.gpg SHA256SUMS
 
 echo -e $header"\n    **NOTE** This script is simple and does not actually do comparisons, it simplifies"
 echo -e "    the process by automating the steps, it is up to you to actually compare"
 echo -e "    the checksums and read the output of the gpg --verify command."$reset
 
 echo -e $text"Removing verification files..."$reset
-#rm -f SHA256SUMS
-#rm -f SHA256SUMS.sign
+rm -f SHA256SUMS
+rm -f SHA256SUMS.gpg
 
 echo -e ""
 
