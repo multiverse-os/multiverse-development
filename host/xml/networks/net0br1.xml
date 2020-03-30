@@ -1,16 +1,8 @@
-<!--
-WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
-OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
-  virsh net-edit net0br1
-or other application using the libvirt API.
--->
-
 <network>
   <name>net0br1</name>
-  <uuid>6c9b108b-e61f-4374-8fc5-0b531f6b690a</uuid>
   <bridge name='net0br1' stp='on' delay='0'/>
   <mac address='00:00:10:01:01:fe'/>
   <domain name='net0br1'/>
-  <ip address='10.10.10.254' netmask='255.255.255.0'>
+  <ip address='10.1.1.254' netmask='255.255.255.0'>
   </ip>
 </network>

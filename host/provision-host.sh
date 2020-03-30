@@ -3,12 +3,15 @@
 ###############################################################################
 # First installation notes for 2020
 
+USER_HOME="/home/user/"
+GIT_SRC_PATH="/home/user/multiverse/"
+MV_CONFIG_PATH="/etc/multiverse/"
 
 ## Packages
 sudo apt-get update
 sudo apt-get upgrade
-sudo apt-get install ovmf qemu pass git dirmngr vim 
-sudo apt-get remove nano minissdpd
+sudo apt-get install -y ovmf qemu qemu-system-common virt-manager pass git dirmngr vim 
+sudo apt-get remove -y nano minissdpd
 
 ## Default Paths
 # NOTE: Not a fan of os-images under images maybe os-installation or os-media or just os
@@ -28,6 +31,7 @@ sudo mkdir -p /var/multiverse/portals/sockets/serial/
 sudo mkdir -p /var/multiverse/portals/sockets/channel/
 sudo mkdir -p /var/multiverse/portals/sockets/console/
 sudo mkdir -p /var/multiverse/portals/sockets/parallel/
+sudo chown -R user:kvm /var/multiverse
 # This is where we will store multiverse.conf or multiverse.yaml, and it will define a lot of the multiverse host configuration that will allow the user to change various multiverse settings
 sudo mkdir -p /etc/multiverse
 
@@ -36,7 +40,7 @@ rm ~/.local/share/libvirt/images
 ln -s /var/multiverse/portals/disks/ ~/.local/share/libvirt/images
 
 ## User
-cd /home/user && rm -rf Desktop Downloads Documents Music Videos Pictures 
+cd /home/user && rmdir Desktop Downloads Documents Music Videos Pictures 
 
 sudo usermod -a -G kvm user
 sudo usermod -a -G libvirt user
@@ -58,17 +62,22 @@ cd /home/user/multiverse/ && rm -rf sh && git clone https://github.com/multivers
 ## VM Setup (Usermode)
 # NOTE: Would be better to move this to root:kvm and avoid needing libvirt group altogether
 
+## Network Bridges
+# NOTE: To be replaced with sockets
 chown -R root:kvm /usr/lib/qemu/
 chmod 4750 /usr/lib/qemu/qemu-bridge-helper
 
+$GIT_SRC_PATH/host/scripts/add-bridge.sh $GIT_SRC_PATH/host/xml/networks/net0br0.xml
+net0br1.xml  net0br2.xml  net1br0.xml  net1br1.xml  net1br2.xml
 
 
 ## Configurations
 # NOTE: Track all changes needed for setting up Multiverse, this will simplify the process and all these can be kept in /etc/multiverse and symbolically linked. Then the rest of the /et/multiverse folder can be custom Multiverse OS config files which will most likely be ruby or YAML based.
-/etc/rc.local
-/etc/motd
-/etc/issue
-/etc/qemu/bridge.conf
-/etc/security/limits.conf
-/etc/sysctl.conf
-/etc/sysctl.d/{TWO FILES COPY IN HERE}
+#/etc/rc.local
+#/etc/motd
+#/etc/issue
+#/etc/qemu/bridge.conf
+#/etc/security/limits.conf
+cp $GIT_SRC_PATH/machines/host.multiverse/config/etc/security/limits.conf /etc/security
+#/etc/sysctl.conf
+#/etc/sysctl.d/{TWO FILES COPY IN HERE}
