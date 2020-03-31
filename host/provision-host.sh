@@ -16,10 +16,9 @@ sudo apt-get remove -y nano minissdpd
 ## Default Paths
 # NOTE: Not a fan of os-images under images maybe os-installation or os-media or just os
 # These /images will probably just end up in portal-gun or portals
-sudo mkdir -p /var/multiverse/images/os-images
-sudo mkdir -p /var/multiverse/images/portal-disks
-# each portal type containing its own share socket, etc. Just copy from git
 sudo mkdir -p /var/multiverse/portal-gun/ 
+sudo mkdir -p /var/multiverse/portal-gun/os-images
+# each portal type containing its own share socket, etc. Just copy from git
 # TODO: Not a fan of "shares" these are plan9 shares, we are already modifying
 # a copy of p9 server and client for a custom disk type and so shares will not
 # really adequately describe the new disk type. IT will provide essentailly a 
@@ -68,16 +67,23 @@ chown -R root:kvm /usr/lib/qemu/
 chmod 4750 /usr/lib/qemu/qemu-bridge-helper
 
 $GIT_SRC_PATH/host/scripts/add-bridge.sh $GIT_SRC_PATH/host/xml/networks/net0br0.xml
-net0br1.xml  net0br2.xml  net1br0.xml  net1br1.xml  net1br2.xml
+#net0br1.xml  net0br2.xml  net1br0.xml  net1br1.xml  net1br2.xml
+
+## Enable IOMMU in grub
+## If using Intel procecssor, comment out grub-amd and uncomment grub-intel
+cp $GIT_SRC_PATH/base-files/etc/default/grub-amd /etc/default
+#cp $GIT_SRC_PATH/base-files/etc/default/grub-intel /etc/default
+update-grub
 
 
 ## Configurations
 # NOTE: Track all changes needed for setting up Multiverse, this will simplify the process and all these can be kept in /etc/multiverse and symbolically linked. Then the rest of the /et/multiverse folder can be custom Multiverse OS config files which will most likely be ruby or YAML based.
 #/etc/rc.local
 #/etc/motd
+#/etc/modules
 #/etc/issue
 #/etc/qemu/bridge.conf
 #/etc/security/limits.conf
-cp $GIT_SRC_PATH/machines/host.multiverse/config/etc/security/limits.conf /etc/security
+cp $GIT_SRC_PATH/base-files/etc/security/limits.conf /etc/security
 #/etc/sysctl.conf
 #/etc/sysctl.d/{TWO FILES COPY IN HERE}
