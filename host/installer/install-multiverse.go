@@ -1,9 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/user"
+	"path/filepath"
+	"strconv"
+
+	"github.com/multiverse-os/color"
+	"github.com/zcalusic/sysinfo"
 )
 
 const (
@@ -11,6 +17,29 @@ const (
 	GIT_SRC_PATH   = USER_HOME + "/multiverse/"
 	MV_CONFIG_PATH = "/etc/multiverse/"
 )
+
+// # Multiverse OS Script Color Palette
+// #==============================================================================
+// header="\e[0;95m" Fuchsia
+// accent="\e[37m" Silver
+// subheader="\e[98m" ??
+// strong="\e[96m" Aqua
+// text="\e[94m" skyBlue
+// success="\e[92m" Lime
+// warning="\e[93m" Yellow
+// fail="\e[91m" Red
+// reset="\e[0m"
+// #==============================================================================
+func Header(text string) string  { return color.Fuchsia(text) }
+func Accent(text string) string  { return color.Silver(text) }
+func Strong(text string) string  { return color.Aqua(text) }
+func Text(text string) string    { return color.SkyBlue(text) }
+func Success(text string) string { return color.Lime(text) }
+func Warning(text string) string { return color.Yellow(text) }
+func Fail(text string) string    { return color.Red(text) }
+
+// Actually maybe replace log with something that wraps lines with above color
+// funcs
 
 func main() {
 	// Check if superuser
@@ -20,13 +49,13 @@ func main() {
 	}
 
 	if current.Uid != "0" {
-		log.Fatal("Must be superuser")
+		log.Fatal(Fail("Must be superuser"))
 	}
 
 	// Get user "user"
 	uzer, err := user.Lookup("user")
 	if err != nil {
-		log.Fatal("requires a user named \"user\": %v\n", err)
+		log.Fatal(Fail(fmt.Sprintf("requires a user named \"user\": %v\n", err)))
 	}
 
 	if uzer.HomeDir != USER_HOME {
@@ -36,9 +65,16 @@ func main() {
 
 	//// Packages
 	pm := NewPackageManager(Apt)
-	pm.Update()
-	pm.Upgrade()
-	if err := pm.InstallPackages(
+	fmt.Println(Text("Updating package lists......"))
+	if err := pm.Update(); err != nil {
+		log.Fatal(Fail(fmt.Sprintf("can't update package lists: %v\n", err)))
+	}
+	fmt.Println(Text("Upgrading packages......"))
+	if err := pm.Upgrade(); err != nil {
+		log.Fatal(Fail(fmt.Sprintf("can't upgrade packages: %v\n", err)))
+	}
+	fmt.Println(Text("Installing packages......"))
+	if err := pm.InstallPackages([]string{
 		"ovmf",
 		"qemu",
 		"qemu-system-common",
@@ -47,81 +83,191 @@ func main() {
 		"git",
 		"dirmngr",
 		"vim",
-	); err != nil {
+	}); err != nil {
 		log.Fatalf("can't install packages: %v\n", err)
 	}
-	if err = pm.RemovePackages("nano", "minissdpd"); err != nil {
-		log.Fatalf("can't remove packages: %v\n", err)
+	fmt.Println(Text("Removing unnecessary packages......"))
+	if err := pm.Autoremove(); err != nil {
+		log.Fatal(Fail(fmt.Sprintf("can't remove packages: %v\n", err)))
+	}
+	if err = pm.RemovePackages([]string{"nano", "minissdpd"}); err != nil {
+		log.Fatal(Fail(fmt.Sprintf("can't remove packages: %v\n", err)))
 	}
 
 	//// Default Paths
-	// TODO handle os.Mkdir, etc errors
-	os.Mkdir("/var/multiverse/portal-gun/", 0700)
-	os.Mkdir("/var/multiverse/portal-gun/os-image", 0700)
-	os.Mkdir("/var/multiverse/portals/share", 0700)
-	os.Mkdir("/var/multiverse/portals/disk", 0700)
-	os.Mkdir("/var/multiverse/portals/sockets/serial", 0700)
-	os.Mkdir("/var/multiverse/portals/sockets/channel", 0700)
-	os.Mkdir("/var/multiverse/portals/sockets/console", 0700)
-	os.Mkdir("/var/multiverse/portals/sockets/parallel", 0700)
-	// TODO is os.Chown recursive or do I have to filewalk it?
-	os.Chown("var/multiverse/", uzer.Uid, uzer.Gid)
+	// TODO handle CreateDir, etc errors
 
-	os.Mkdir("/etc/multiverse", 0700)
+	fmt.Println(Text("Creating default filepath...."))
+
+	uid, err := strconv.Atoi(uzer.Uid)
+	if err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	gid, err := strconv.Atoi(uzer.Gid)
+	if err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+
+	if err = CreateDir("/var/multiverse", 0700, uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = CreateDir("/var/multiverse/portal-gun", 0700, uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = CreateDir("/var/multiverse/portal-gun/os-image", 0700, uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = CreateDir("/var/multiverse/portals/share", 0700, uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = CreateDir("/var/multiverse/portals", 0700, uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = CreateDir("/var/multiverse/portals/sockets", 0700, uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = CreateDir("/var/multiverse/portals/sockets/serial", 0700, uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = CreateDir("/var/multiverse/portals/sockets/channel", 0700, uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = CreateDir("/var/multiverse/portals/sockets/console", 0700, uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = CreateDir("/var/multiverse/portals/sockets/parallel", 0700, uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	// TODO contemplate the implications of making these config files user
+	// editable
+	if err = CreateDir("/etc/multiverse", 0700, uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
 	// Because libvirt recreates its default image folder if it's not detected,
 	// let's link it to our primary default
-	os.Remove(uzer.Homedir + "/.local/share/libvirt/images")
-	os.Symlink("/var/multiverse/portals/disks/", uzer.Homedir+"/.local/share/libvirt/images")
+	if err = os.Remove(uzer.HomeDir + "/.local/share/libvirt/images"); err != nil {
+		log.Println(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = CreateDir(uzer.HomeDir+"/.local/share/libvirt", 0755, uid, gid); err != nil {
+		log.Println(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = os.Symlink("/var/multiverse/portals/disks/", uzer.HomeDir+"/.local/share/libvirt/images"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
 
 	//// User
-	os.Remove(uzer.Homedir + "Desktop")
-	os.Remove(uzer.Homedir + "Downloads")
-	os.Remove(uzer.Homedir + "Documents")
-	os.Remove(uzer.Homedir + "Music")
-	os.Remove(uzer.Homedir + "Videos")
-	os.Remove(uzer.Homedir + "Pictures")
+	if err = os.Remove(uzer.HomeDir + "/Desktop"); err != nil {
+		log.Println(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = os.Remove(uzer.HomeDir + "/Downloads"); err != nil {
+		log.Println(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = os.Remove(uzer.HomeDir + "/Documents"); err != nil {
+		log.Println(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = os.Remove(uzer.HomeDir + "/Music"); err != nil {
+		log.Println(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = os.Remove(uzer.HomeDir + "/Videos"); err != nil {
+		log.Println(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = os.Remove(uzer.HomeDir + "/Pictures"); err != nil {
+		log.Println(Fail(fmt.Sprintf(": %v\n", err)))
+	}
 
 	////// VM Setup (Usermode)
 	//// NOTE: Would be better to move this to root:kvm and avoid needing libvirt group altogether
 
-	Terminal("usermod -a -G kvm user")
-	Terminal("usermod -a -G libvirt user")
+	fmt.Println(Text("Adding user to kvm and libvirt groups..."))
 
-	os.Chdir(uzer.Homedir)
-	Terminal("git clone https://github.com/multiverse-os/multiverse-development multiverse")
-	// TODO wtf is this rm sh clone sh?
-	//cd uzer.Homedir/multiverse/ && rm -rf sh && git clone https://github.com/multiverse-os/sh
-	// TODO is os.Chown recursive or do I have to filewalk it?
-	os.Chown("multiverse", uzer.Uid, uzer.Gid)
+	if err = Terminal("usermod -a -G kvm user"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = Terminal("groupadd --system libvirt"); err != nil {
+		log.Println(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = Terminal("usermod -a -G libvirt user"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
 
 	//// Configurations
 	//// Install Config files
-	os.Chdir(uzer.Homedir + "/multiverse/host/base-files")
-	Copy("./home/user/.gitconfig", uzer.HomeDir+"/.gitconfig")
-	os.Chown(uzer.HomeDir+".gitconfig", uzer.Uid, uzer.Gid)
+	fmt.Println(Text("Copying default config files...."))
+
+	if err = os.Chdir(uzer.HomeDir); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = Terminal("git clone https://github.com/multiverse-os/multiverse-development multiverse"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	// TODO wtf is this rm sh clone sh?
+	//cd uzer.HomeDir/multiverse/ && rm -rf sh && git clone https://github.com/multiverse-os/sh
+	// TODO is os.Chown recursive or do I have to filewalk it?
+	if err = filepath.Walk("multiverse", func(name string, info os.FileInfo, err error) error {
+		if err = os.Chown(name, uid, gid); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+
+	if err = os.Chdir(uzer.HomeDir + "/multiverse/host/base-files"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = Copy("./home/user/.gitconfig", uzer.HomeDir+"/.gitconfig"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = os.Chown(uzer.HomeDir+"/.gitconfig", uid, gid); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
 
 	// NOTE: Track all changes needed for setting up Multiverse, this will simplify the process and all these can be kept in /etc/multiverse and symbolically linked. Then the rest of the /et/multiverse folder can be custom Multiverse OS config files which will most likely be ruby or YAML based.
-	Copy("./etc/motd", "/etc/motd")
-	Copy("./etc/modules", "/etc/modules")
-	Copy("./etc/issue", "/etc/issue")
-	Copy("./etc/security/limits.conf", "/etc/security/limits.conf")
-	Copy("./etc/sysctl.conf", "/etc/sysctl.conf")
-	Copy("./etc/sysctl.d/30-tracker.conf", "/etc/sysctl.d/30-tracker.conf")
-	Copy("./etc/sysctl.d/99-sysctl.conf", "/etc/sysctl.d/99-sysctl.conf") // TODO everything is commented out , is this file necessary?
+	if err = Copy("./etc/motd", "/etc/motd"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = Copy("./etc/modules", "/etc/modules"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = Copy("./etc/issue", "/etc/issue"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = Copy("./etc/security/limits.conf", "/etc/security/limits.conf"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = Copy("./etc/sysctl.conf", "/etc/sysctl.conf"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = Copy("./etc/sysctl.d/30-tracker.conf", "/etc/sysctl.d/30-tracker.conf"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = Copy("./etc/sysctl.d/99-sysctl.conf", "/etc/sysctl.d/99-sysctl.conf"); err != nil { // TODO everything is commented out , is this file necessary?
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
 	// TODO some of the rc.local stuff is vfio passthrough that should be done in
 	// another step
-	Copy("./etc/rc.local", "/etc/rc.local")
+	if err = Copy("./etc/rc.local", "/etc/rc.local"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
 	// TODO is bridge.conf obsolete yet?
 	//Copy("./etc/qemu/bridge.conf", "/etc/qemu/bridge.conf")
 
 	//// Enable IOMMU in grub
-	// TODO
-	// Use https://github.com/zcalusic/sysinfo to get CPU info and install correct
-	// grub config
-	//// If using Intel procecssor, comment out grub-amd and uncomment grub-intel
-	Copy("./base-files/etc/default/grub-amd", "/etc/default/grub")
-	//cp $GIT_SRC_PATH/base-files/etc/default/grub-intel /etc/default
-	Terminal("update-grub")
+	fmt.Println(Text("Enabling IOMMU in grub...."))
+	var sInfo sysinfo.SysInfo
+	sInfo.GetSysInfo()
+	if sInfo.CPU.Vendor == "AuthenticAMD" {
+		if err = Copy("./etc/default/grub-amd", "/etc/default/grub"); err != nil {
+			log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+		}
+	} else if sInfo.CPU.Vendor == "GenuineIntel" {
+		if err = Copy("./etc/default/grub-intel", "/etc/default/grub"); err != nil {
+			log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+		}
+	}
+	if err = Terminal("update-grub"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
 }
 
 ////// SH Framework

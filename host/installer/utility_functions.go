@@ -83,28 +83,35 @@ func (self PackageManager) RemovePackages(pkgs []string) error {
 	return Terminal(self.Remove() + ` ` + strings.Join(pkgs, " "))
 }
 
-func (self PackageManager) Update() string {
+func (self PackageManager) Autoremove() error {
 	switch self.Type {
-	case Apk:
-		return "apk update"
 	default: // Apt
-		return "DEBIAN_FRONTEND=noninteractive apt update -y"
+		return Terminal("DEBIAN_FRONTEND=noninteractive apt autoremove -y")
 	}
 }
 
-func (self PackageManager) Upgrade() string {
+func (self PackageManager) Update() error {
 	switch self.Type {
 	case Apk:
-		return "apk upgrade"
+		return Terminal("apk update")
 	default: // Apt
-		return "DEBIAN_FRONTEND=noninteractive apt upgrade -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew -y"
+		return Terminal("DEBIAN_FRONTEND=noninteractive apt update -y")
 	}
 }
 
-func (self PackageManager) DistUpgrade() string {
+func (self PackageManager) Upgrade() error {
+	switch self.Type {
+	case Apk:
+		return Terminal("apk upgrade")
+	default: // Apt
+		return Terminal("DEBIAN_FRONTEND=noninteractive apt upgrade -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew -y")
+	}
+}
+
+func (self PackageManager) DistUpgrade() error {
 	switch self.Type {
 	default: // Apt
-		return "DEBIAN_FRONTEND=noninteractive apt dist-upgrade -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew -y"
+		return Terminal("DEBIAN_FRONTEND=noninteractive apt dist-upgrade -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew -y")
 	}
 }
 
@@ -381,4 +388,15 @@ func Copy(src, dst string) error {
 		return err
 	}
 	return out.Close()
+}
+
+func CreateDir(name string, perm os.FileMode, uid int, gid int) error {
+	if err := os.MkdirAll(name, perm); err != nil {
+		return err
+	}
+
+	if err := os.Chown(name, uid, gid); err != nil {
+		return err
+	}
+	return nil
 }

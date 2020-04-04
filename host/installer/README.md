@@ -1,13 +1,13 @@
 ## Multiverse OS: Installer
 ### Status of Go installer:
+#### Host installer
 - [ ] Replace manual base Debian install
 - [ ] Merge old install scripts:
   - [ ] ./multiverse-setup
   - [x] ../provision-host.sh
-  - [ ] ../scripts/provision.sh
+  - [x] ../scripts/provision.sh
   - Other ../scripts/ ?
-- [ ] Correctly install grub based on CPU manufacturer/architecture
-  - Get info with [](https://github.com/zcalusic/sysinfo)
+- [x] Correctly install grub based on CPU manufacturer/architecture
 - [ ] Initialize password storage (until scramble suite key system is in place)
   - [ ] Create GPG key
   - [ ] `pass init {key_name}`
@@ -19,11 +19,14 @@
   - Ideally using portal gun
   - Waiting for vsock replacement for qemu bridges
 - [ ] Make interactive TUI
-  - Use [](https://github.com/AlecAivazis/survey)
+  - Use [https://github.com/AlecAivazis/survey]()
 - ...?
 - Reviewed:
   - [x] ./install.host.md
     - Many specifics out of date, but most explanatory notes still apply
+
+#### Controller installer
+- [] Everything
 
 ### Misc
 - `noatime` in fstab for less disk writes
