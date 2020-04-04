@@ -226,9 +226,6 @@ func main() {
 	if err = Copy("./etc/motd", "/etc/motd"); err != nil {
 		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
 	}
-	if err = Copy("./etc/modules", "/etc/modules"); err != nil {
-		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
-	}
 	if err = Copy("./etc/issue", "/etc/issue"); err != nil {
 		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
 	}
@@ -253,21 +250,40 @@ func main() {
 	//Copy("./etc/qemu/bridge.conf", "/etc/qemu/bridge.conf")
 
 	//// Enable IOMMU in grub
-	fmt.Println(Text("Enabling IOMMU in grub...."))
+	fmt.Println(Text("Copying processor specific config files and enabling IOMMU in grub...."))
+	if err = os.Chdir(uzer.HomeDir + "/multiverse/host/base-files"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+
 	var sInfo sysinfo.SysInfo
 	sInfo.GetSysInfo()
 	if sInfo.CPU.Vendor == "AuthenticAMD" {
 		if err = Copy("./etc/default/grub-amd", "/etc/default/grub"); err != nil {
 			log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
 		}
+		if err = Copy("./etc/modules-amd", "/etc/modules"); err != nil {
+			log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+		}
 	} else if sInfo.CPU.Vendor == "GenuineIntel" {
 		if err = Copy("./etc/default/grub-intel", "/etc/default/grub"); err != nil {
+			log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+		}
+		if err = Copy("./etc/modules-intel", "/etc/modules"); err != nil {
 			log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
 		}
 	}
 	if err = Terminal("update-grub"); err != nil {
 		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
 	}
+
+	fmt.Println(Text("Adding modules to initramfs...."))
+	if err = Copy("./etc/initramfs-tools/modules", "/etc/initramfs-tools/modules"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+	if err = Terminal("update-initramfs -u"); err != nil {
+		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
+	}
+
 }
 
 ////// SH Framework
@@ -280,3 +296,7 @@ func main() {
 
 //$GIT_SRC_PATH/host/scripts/add-bridge.sh $GIT_SRC_PATH/host/xml/networks/net0br0.xml
 ////net0br1.xml  net0br2.xml  net1br0.xml  net1br1.xml  net1br2.xml
+
+// echo -e $strong"Downloading Linux distributions$accent os-images$reset needed for Multiverse OS installation..."$reset
+
+// cd $GIT_SRC_PATH/images/os-images && ./alpine-dl-and-verify.sh

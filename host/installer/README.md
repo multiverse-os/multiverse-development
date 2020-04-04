@@ -3,7 +3,7 @@
 #### Host installer
 - [ ] Replace manual base Debian install
 - [ ] Merge old install scripts:
-  - [ ] ./multiverse-setup
+  - [x] ./multiverse-setup
   - [x] ../provision-host.sh
   - [x] ../scripts/provision.sh
   - Other ../scripts/ ?
@@ -18,6 +18,7 @@
 - [ ] Setup router vms and networking
   - Ideally using portal gun
   - Waiting for vsock replacement for qemu bridges
+- [ ] Set up paths for copying files better instead of cd-ing
 - [ ] Make interactive TUI
   - Use [https://github.com/AlecAivazis/survey]()
 - ...?
@@ -26,10 +27,28 @@
     - Many specifics out of date, but most explanatory notes still apply
 
 #### Controller installer
-- [] Everything
+- [ ] Everything
+
+#### ISO download scripts
+- [ ] Convert them to go
 
 ### Misc
 - `noatime` in fstab for less disk writes
+- Another version of the provision script installed more packages. Investigate
+  which are actually wanted. Might be explicitly downloading "recommended"
+  packages that would otherwise be pulled in by the smaller set of packages.
+
+```
+patch rsync gnupg2 ssh ssh-askpass tor tree \
+	qemu-kvm qemu-utils ovmf \
+	qemu-system-x86 qemu-user-static qemu-utils libpam-cap \
+	libvirt0 libvirt-dev libvirt-clients libvirt-daemon libvirt-daemon-system \
+	pkg-config libfile-fcntllock-perl \
+	bridge-utils ebtables libxml2-utils netcat-openbsd iproute2 dmidecode dnsmasq-base
+
+# in Debian Buster, the packages have a different name in Debian Stretch
+gir1.2-spiceclientglib-2.0 gir1.2-spiceclientgtk-3.0
+```
 
 
 
