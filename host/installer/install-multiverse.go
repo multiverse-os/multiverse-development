@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/AlecAivazis/survey"
 	"github.com/multiverse-os/color"
 	"github.com/zcalusic/sysinfo"
 )
@@ -18,6 +19,13 @@ const (
 	MV_CONFIG_PATH = "/etc/multiverse"
 	MV_SYSTEM_PATH = "/var/multiverse"
 )
+
+type User struct {
+	uid int
+	gid int
+}
+
+var uzr User
 
 // # Multiverse OS Script Color Palette
 // #==============================================================================
@@ -55,32 +63,16 @@ func main() {
 
 	//// User
 	fmt.Println(Text("Setting up user account...."))
-	// Get user "user"
-	uzer, err := SetupUser()
-	if err != nil {
-		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
-	}
-
-	uid, err := strconv.Atoi(uzer.Uid)
-	if err != nil {
-		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
-	}
-	gid, err := strconv.Atoi(uzer.Gid)
-	if err != nil {
-		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
-	}
+	AskRetry(SetupUser)
 
 	//// Packages
 	pm := NewPackageManager(Apt)
 	fmt.Println(Text("Updating package lists......"))
-	if err := pm.Update(); err != nil {
-		log.Fatal(Fail(fmt.Sprintf("can't update package lists: %v\n", err)))
-	}
+	AskRetry(pm.Update)
 	fmt.Println(Text("Upgrading packages......"))
-	if err := pm.Upgrade(); err != nil {
-		log.Fatal(Fail(fmt.Sprintf("can't upgrade packages: %v\n", err)))
-	}
+	AskRetry(pm.Upgrade)
 	fmt.Println(Text("Installing packages......"))
+	// TODO best way to call this with AskRetry. Global with list of packages?
 	if err := pm.InstallPackages([]string{
 		"ovmf",
 		"qemu",
@@ -94,85 +86,94 @@ func main() {
 		log.Fatalf("can't install packages: %v\n", err)
 	}
 	fmt.Println(Text("Removing unnecessary packages......"))
-	if err := pm.Autoremove(); err != nil {
-		log.Fatal(Fail(fmt.Sprintf("can't remove packages: %v\n", err)))
-	}
+	// TODO best way to call this with AskRetry. Global with list of packages?
 	if err = pm.RemovePackages([]string{"nano", "minissdpd"}); err != nil {
 		log.Fatal(Fail(fmt.Sprintf("can't remove packages: %v\n", err)))
 	}
+	AskRetry(pm.Autoremove)
 
 	//// Default Paths
 	// TODO handle CreateDir, etc errors
 
 	fmt.Println(Text("Creating default filepath...."))
-	if err = CreateMultiversePaths(uid, gid); err != nil {
-		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
-	}
+	AskRetry(CreateMultiversePaths)
 
 	//// Configurations
 	//// Install Config files
 	fmt.Println(Text("Downloading default config files...."))
-	if err := DownloadConfigFiles(uid, gid); err != nil {
-		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
-	}
+	AskRetry(DownloadConfigFiles)
 
-	fmt.Println(Text("Copying config files..."))
-	if err := CopyUserConfigFiles(uid, gid); err != nil {
-		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
-	}
-
-	if err := CopyGeneralConfigFiles(uid, gid); err != nil {
-		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
-	}
+	fmt.Println(Text("Copying default config files...."))
+	AskRetry(CopyGeneralConfigFiles)
 
 	//// Enable IOMMU in grub
 	fmt.Println(Text("Copying processor specific config files and enabling IOMMU in grub...."))
 
-	if err := DoProcessorSpecificConfig(); err != nil {
-		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
-	}
+	AskRetry(DoProcessorSpecificConfig)
 	fmt.Println(Text("Adding modules to initramfs...."))
-	if err := DoInitramfsConfig(); err != nil {
-		log.Fatal(Fail(fmt.Sprintf(": %v\n", err)))
-	}
+	AskRetry(DoInitramfsConfig)
 
 }
 
-func CreateMultiversePaths(uid, gid int) error {
-	if err := CreateDir(MV_SYSTEM_PATH, 0700, uid, gid); err != nil {
+type step func() error
+
+func AskRetry(s step) error {
+	if err := s(); err != nil {
+		var q = &survey.Select{
+			Message: fmt.Sprintf("Step failed due to error: %v\nRetry?", err),
+			Options: []string{"retry", "skip", "exit"},
+			Default: "retry",
+		}
+		var resp string
+		survey.AskOne(q, &resp)
+		if resp == "retry" {
+			return AskRetry(s)
+		} else if resp == "skip" {
+			return nil
+		} else if resp == "exit" {
+			log.Println(Fail(err.Error()))
+			os.Exit(1)
+			return err
+		}
+	}
+	return nil
+}
+
+func CreateMultiversePaths() error {
+	if err := CreateDir(MV_SYSTEM_PATH, 0700, uzr.uid, uzr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portal-gun", 0700, uid, gid); err != nil {
+	if err := CreateDir(MV_SYSTEM_PATH+"/portal-gun", 0700, uzr.uid, uzr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portal-gun/os-image", 0700, uid, gid); err != nil {
+	if err := CreateDir(MV_SYSTEM_PATH+"/portal-gun/os-image", 0700, uzr.uid, uzr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/share", 0700, uid, gid); err != nil {
+	if err := CreateDir(MV_SYSTEM_PATH+"/portals/share", 0700, uzr.uid, uzr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals", 0700, uid, gid); err != nil {
+	if err := CreateDir(MV_SYSTEM_PATH+"/portals", 0700, uzr.uid, uzr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets", 0700, uid, gid); err != nil {
+	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets", 0700, uzr.uid, uzr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/serial", 0700, uid, gid); err != nil {
+	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/serial", 0700, uzr.uid, uzr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/channel", 0700, uid, gid); err != nil {
+	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/channel", 0700, uzr.uid, uzr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/console", 0700, uid, gid); err != nil {
+	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/console", 0700, uzr.uid, uzr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/parallel", 0700, uid, gid); err != nil {
+	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/parallel", 0700, uzr.uid, uzr.gid); err != nil {
 	}
 	// Because libvirt recreates its default image folder if it's not detected,
 	// let's link it to our primary default
 	if err := os.Remove(USER_HOME + "/.local/share/libvirt/images"); err != nil {
 	}
-	if err := CreateDir(USER_HOME+"/.local/share/libvirt", 0755, uid, gid); err != nil {
+	if err := CreateDir(USER_HOME+"/.local/share/libvirt", 0755, uzr.uid, uzr.gid); err != nil {
 	}
 	if err := os.Symlink(MV_SYSTEM_PATH+"/portals/disks/", USER_HOME+"/.local/share/libvirt/images"); err != nil {
 	}
@@ -180,33 +181,46 @@ func CreateMultiversePaths(uid, gid int) error {
 	return nil
 }
 
-func SetupUser() (*user.User, error) {
+func SetupUser() error {
 	uzer, err := user.Lookup("user")
 	if err != nil {
-		return uzer, err
+		log.Println(Fail("User 'user' required"))
+		return err
 	}
+
+	uid, err := strconv.Atoi(uzer.Uid)
+	if err != nil {
+		return err
+	}
+	uzr.uid = uid
+
+	gid, err := strconv.Atoi(uzer.Gid)
+	if err != nil {
+		return err
+	}
+	uzr.gid = gid
 
 	if uzer.HomeDir != USER_HOME {
 		log.Printf("User home directory mismatch, setting it to '%v'\n", USER_HOME)
 		uzer.HomeDir = USER_HOME
 	}
 	if err := os.Remove(USER_HOME + "/Desktop"); err != nil {
-		return uzer, err
+		log.Printf(Warning(fmt.Sprintf("Cannot remove directory, %v\n", err)))
 	}
 	if err := os.Remove(USER_HOME + "/Downloads"); err != nil {
-		return uzer, err
+		log.Printf(Warning(fmt.Sprintf("Cannot remove directory, %v\n", err)))
 	}
 	if err := os.Remove(USER_HOME + "/Documents"); err != nil {
-		return uzer, err
+		log.Printf(Warning(fmt.Sprintf("Cannot remove directory, %v\n", err)))
 	}
 	if err := os.Remove(USER_HOME + "/Music"); err != nil {
-		return uzer, err
+		log.Printf(Warning(fmt.Sprintf("Cannot remove directory, %v\n", err)))
 	}
 	if err := os.Remove(USER_HOME + "/Videos"); err != nil {
-		return uzer, err
+		log.Printf(Warning(fmt.Sprintf("Cannot remove directory, %v\n", err)))
 	}
 	if err := os.Remove(USER_HOME + "/Pictures"); err != nil {
-		return uzer, err
+		log.Printf(Warning(fmt.Sprintf("Cannot remove directory, %v\n", err)))
 	}
 
 	////// VM Setup (Usermode)
@@ -215,27 +229,30 @@ func SetupUser() (*user.User, error) {
 	fmt.Println(Text("Adding user to kvm and libvirt groups..."))
 
 	if err := Terminal("usermod -a -G kvm user"); err != nil {
-		return uzer, err
+		return err
 	}
 	if err := Terminal("groupadd --system libvirt"); err != nil {
-		return uzer, err
+		log.Println(Warning(err.Error()))
 	}
 	if err := Terminal("usermod -a -G libvirt user"); err != nil {
-		return uzer, err
+		return err
 	}
 
-	return uzer, nil
+	return nil
 }
 
-func DownloadConfigFiles(uid, gid int) error {
+func DownloadConfigFiles() error {
 	if err := Terminal("git clone https://github.com/multiverse-os/multiverse-development " + GIT_SRC_PATH); err != nil {
+		// TODO
+		// better than erroring if the directory is already there is checking the git
+		// error and cd + git pull instead
 		return err
 	}
 	// TODO wtf is this rm sh clone sh?
 	//cd USER_HOME/multiverse/ && rm -rf sh && git clone https://github.com/multiverse-os/sh
 	// TODO is os.Chown recursive or do I have to filewalk it?
 	if err := filepath.Walk(GIT_SRC_PATH, func(name string, info os.FileInfo, err error) error {
-		if err := os.Chown(name, uid, gid); err != nil {
+		if err := os.Chown(name, uzr.uid, uzr.gid); err != nil {
 			return err
 		}
 		return nil
@@ -245,67 +262,65 @@ func DownloadConfigFiles(uid, gid int) error {
 	return nil
 }
 
-func CopyUserConfigFiles(uid, gid int) error {
-	if err := Copy("./home/user/.gitconfig", USER_HOME+"/.gitconfig"); err != nil {
-		return err
-	}
-	if err := os.Chown(USER_HOME+"/.gitconfig", uid, gid); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func CopyGeneralConfigFiles(uid, gid int) error {
+func CopyGeneralConfigFiles() error {
 	// NOTE: Track all changes needed for setting up Multiverse, this will simplify the process and all these can be kept in /etc/multiverse and symbolically linked. Then the rest of the /et/multiverse folder can be custom Multiverse OS config files which will most likely be ruby or YAML based.
 	// TODO contemplate the implications of making these config files user
 	// editable
-	if err := CreateDir("/etc/multiverse", 0700, uid, gid); err != nil {
+	baseFilesPath := GIT_SRC_PATH + "/host/base-files"
+	if err := Copy(baseFilesPath+"/home/user/.gitconfig", USER_HOME+"/.gitconfig"); err != nil {
 		return err
 	}
-	if err := Copy(MV_CONFIG_PATH+"/etc/motd", "/etc/motd"); err != nil {
+	if err := os.Chown(USER_HOME+"/.gitconfig", uzr.uid, uzr.gid); err != nil {
 		return err
 	}
-	if err := Copy(MV_CONFIG_PATH+"/etc/issue", "/etc/issue"); err != nil {
+
+	if err := CreateDir("/etc/multiverse", 0700, uzr.uid, uzr.gid); err != nil {
 		return err
 	}
-	if err := Copy(MV_CONFIG_PATH+"/etc/security/limits.conf", "/etc/security/limits.conf"); err != nil {
+	if err := Copy(baseFilesPath+"/etc/motd", "/etc/motd"); err != nil {
 		return err
 	}
-	if err := Copy(MV_CONFIG_PATH+"/etc/sysctl.conf", "/etc/sysctl.conf"); err != nil {
+	if err := Copy(baseFilesPath+"/etc/issue", "/etc/issue"); err != nil {
 		return err
 	}
-	if err := Copy(MV_CONFIG_PATH+"/etc/sysctl.d/30-tracker.conf", "/etc/sysctl.d/30-tracker.conf"); err != nil {
+	if err := Copy(baseFilesPath+"/etc/security/limits.conf", "/etc/security/limits.conf"); err != nil {
 		return err
 	}
-	if err := Copy(MV_CONFIG_PATH+"/etc/sysctl.d/99-sysctl.conf", "/etc/sysctl.d/99-sysctl.conf"); err != nil { // TODO everything is commented out , is this file necessary?
+	if err := Copy(baseFilesPath+"/etc/sysctl.conf", "/etc/sysctl.conf"); err != nil {
+		return err
+	}
+	if err := Copy(baseFilesPath+"/etc/sysctl.d/30-tracker.conf", "/etc/sysctl.d/30-tracker.conf"); err != nil {
+		return err
+	}
+	if err := Copy(baseFilesPath+"/etc/sysctl.d/99-sysctl.conf", "/etc/sysctl.d/99-sysctl.conf"); err != nil { // TODO everything is commented out , is this file necessary?
 		return err
 	}
 	// TODO some of the rc.local stuff is vfio passthrough that should be done in
 	// another step
-	if err := Copy(MV_CONFIG_PATH+"/etc/rc.local", "/etc/rc.local"); err != nil {
+	if err := Copy(baseFilesPath+"/etc/rc.local", "/etc/rc.local"); err != nil {
 		return err
 	}
 	// TODO is bridge.conf obsolete yet?
-	//Copy(MV_CONFIG_PATH + "/etc/qemu/bridge.conf", "/etc/qemu/bridge.conf")
+	//Copy(baseFilesPath + "/etc/qemu/bridge.conf", "/etc/qemu/bridge.conf")
 	return nil
 }
 
 func DoProcessorSpecificConfig() error {
+	baseFilesPath := GIT_SRC_PATH + "/host/base-files"
 	var sInfo sysinfo.SysInfo
 	sInfo.GetSysInfo()
 	if sInfo.CPU.Vendor == "AuthenticAMD" {
-		if err := Copy(MV_CONFIG_PATH+"/etc/default/grub-amd", "/etc/default/grub"); err != nil {
+		if err := Copy(baseFilesPath+"/etc/default/grub-amd", "/etc/default/grub"); err != nil {
 			return err
 		}
-		if err := Copy(MV_CONFIG_PATH+"/etc/modules-amd", "/etc/modules"); err != nil {
+		if err := Copy(baseFilesPath+"/etc/modules-amd", "/etc/modules"); err != nil {
 			return err
 		}
 	} else if sInfo.CPU.Vendor == "GenuineIntel" {
-		if err := Copy(MV_CONFIG_PATH+"/etc/default/grub-intel", "/etc/default/grub"); err != nil {
+		if err := Copy(baseFilesPath+"/etc/default/grub-intel", "/etc/default/grub"); err != nil {
 			return err
 		}
-		if err := Copy(MV_CONFIG_PATH+"/etc/modules-intel", "/etc/modules"); err != nil {
+		if err := Copy(baseFilesPath+"/etc/modules-intel", "/etc/modules"); err != nil {
 			return err
 		}
 	}
@@ -316,7 +331,8 @@ func DoProcessorSpecificConfig() error {
 }
 
 func DoInitramfsConfig() error {
-	if err := Copy(MV_CONFIG_PATH+"/etc/initramfs-tools/modules", "/etc/initramfs-tools/modules"); err != nil {
+	baseFilesPath := GIT_SRC_PATH + "/host/base-files"
+	if err := Copy(baseFilesPath+"/etc/initramfs-tools/modules", "/etc/initramfs-tools/modules"); err != nil {
 		return err
 	}
 	if err := Terminal("update-initramfs -u"); err != nil {
