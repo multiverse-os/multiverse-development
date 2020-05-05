@@ -1,0 +1,2 @@
+# Go `grubmkconfig` 
+We want to rebuild grubmkconfig so we don't have to manage a bunch of shell scripts that generate our grub config file. This may lead into porting more of the grub tools to Go but this one is our first roadblock. The key will be to delete the previous one and symbolic link to ours so that it is ran when grubmkconfig is executed automatically which happens almost every upgrade or minor change. 

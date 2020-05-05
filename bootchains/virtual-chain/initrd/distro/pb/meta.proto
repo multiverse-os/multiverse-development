@@ -1,0 +1,32 @@
+syntax = "proto2";
+
+option go_package = ".;pb";
+
+package pb;
+
+import "build.proto";
+
+message Meta {
+  // Transitive closure of runtime dependency package names. E.g.:
+  // ["glibc-amd64-2.31-4", "pam-amd64-1.3.1-11"]
+  repeated string runtime_dep = 1;
+
+  // The source package from which this package was built. Useful to tie
+  // split packages back to their source, and for globbing versions.
+  optional string source_pkg = 2;
+
+  // The version of the package. In some contexts, the version is already
+  // included in the filename, but not when e.g. “distri install” is obtaining
+  // meta.textproto files by accessing a symbolic link.
+  optional string version = 3;
+
+  // Runtime union directories are used to implement per-package exchange
+  // directories (as opposed to global exchange directories). This is to be used
+  // for tight coupling situations, e.g. when a plugin mechanism does not
+  // guarantee ABI compatibility across versions.
+  repeated Union runtime_union = 4;
+
+  // Opaque (printable) digest of all inputs to this build. Used by e.g. distri
+  // batch to figure out what to rebuild.
+  optional string input_digest = 5;
+}

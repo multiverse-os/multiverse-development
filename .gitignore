@@ -2,6 +2,12 @@
 # Multiverse .gitignore
 ########################################
 
+# Development
+alpha-release
+alpha-release/*
+development
+development/*
+
 # Various VM Images
 *.qcow2
 *.qcow

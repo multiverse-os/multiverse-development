@@ -1,0 +1,37 @@
+syntax = "proto2";
+
+option go_package = ".;pb";
+
+package pb;
+
+message PingRequest {
+}
+
+message PingReply {
+}
+
+message MkdirAllRequest {
+  optional string dir = 1;
+}
+
+message MkdirAllReply {
+}
+
+message ScanPackagesRequest {
+}
+
+message ScanPackagesReply {
+}
+
+service FUSE {
+  rpc Ping(PingRequest) returns (PingReply) {}
+
+  // MkdirAll creates the specified directory in the root of the mountpoint
+  // (e.g. /ro/systemd-amd64-239). This is useful for bind-mounting
+  // DESTDIR/PREFIX to PREFIX when building packages.
+  rpc MkdirAll(MkdirAllRequest) returns (MkdirAllReply) {}
+
+  // ScanPackages discovers new packages in the mounted repository. This is
+  // called by “distri install”.
+  rpc ScanPackages(ScanPackagesRequest) returns (ScanPackagesReply) {}
+}

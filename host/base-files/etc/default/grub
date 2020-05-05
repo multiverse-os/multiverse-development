@@ -1,0 +1,6 @@
+GRUB_DEFAULT=0                                   
+GRUB_TIMEOUT=5                                   
+GRUB_DISTRIBUTOR="Multiverse OS"                 
+#GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on isolcpus=1-6,11-16"
+GRUB_CMDLINE_LINUX=""                            

@@ -1,0 +1,187 @@
+
+    <!DOCTYPE html>
+    <html lang="en-US">
+      <head>
+        <title>Firefox Send</title>
+        <base href="/" />
+        <meta name="robots" content="none,noarchive" />
+        <meta name="google" content="nositelinkssearchbox" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <meta property="og:title" content="Firefox Send" />
+        <meta name="twitter:title" content="Firefox Send" />
+        <meta name="description" content="Encrypt and send files with a link that automatically expires to ensure your important documents don’t stay online forever." />
+        <meta property="og:description" content="Encrypt and send files with a link that automatically expires to ensure your important documents don’t stay online forever." />
+        <meta name="twitter:description" content="Encrypt and send files with a link that automatically expires to ensure your important documents don’t stay online forever." />
+        <meta name="twitter:card" content="summary" />
+        <meta
+          property="og:image"
+          content="https://send.firefox.com/send-fb.358d4b57.jpg"
+        />
+        <meta
+          name="twitter:image"
+          content="https://send.firefox.com/send-twitter.95d5f4ac.jpg"
+        />
+        <meta property="og:url" content="https://send.firefox.com" />
+        <meta name="theme-color" content="#220033" />
+        <meta name="msapplication-TileColor" content="#220033" />
+
+        <link rel="manifest" href="/app.webmanifest" />
+        <link rel="stylesheet" type="text/css" href="/inter.css" />
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href="app.10b5ff7c.css"
+        />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="apple-touch-icon.d8ff4845.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="favicon-32x32.acc41fc7.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="favicon-16x16.dd949bf3.png"
+        />
+        <link
+          rel="mask-icon"
+          href="safari-pinned-tab.c54acb0b.svg"
+          color="#838383"
+        />
+        <script defer src="app.7b4ad067.js"></script>
+      </head>
+      <noscript>
+        <div class="noscript">
+          <h2>Firefox Send requires JavaScript</h2>
+          <p>
+            <a
+              class="link"
+              href="https://github.com/mozilla/send/blob/master/docs/faq.md#why-does-firefox-send-require-javascript"
+            >
+              Why does Firefox Send require JavaScript?
+            </a>
+          </p>
+          <p>Please enable JavaScript and try again.</p>
+        </div>
+      </noscript>
+      
+      <body
+        class="flex flex-col items-center font-sans md:h-screen md:bg-grey-10 dark:bg-black"
+      >
+         
+      <header
+        class="main-header relative flex-none flex flex-row items-center justify-between w-full px-6 md:px-8 h-16 md:h-24 z-20 bg-transparent"
+      >
+        
+            <a class="flex flex-row items-center" href="/">
+              <img
+                alt="Firefox Send"
+                src="icon.fd04d81a.svg"
+              />
+              <svg class="w-48 md:w-64">
+                <use xlink:href="wordmark.d113c385.svg#logo" />
+              </svg>
+            </a>
+           
+        <div></div>
+      
+      </header>
+    
+        
+    <main class="main">
+      
+      <section
+        class="relative h-full w-full p-6 md:p-8 md:rounded-xl md:shadow-big"
+      >
+        
+      </section>
+    </main>
+   
+      <footer
+        class="flex flex-col md:flex-row items-start w-full flex-none self-start p-6 md:p-8 font-medium text-xs text-grey-60 dark:text-grey-40 md:items-center justify-between"
+      >
+        <a class="mozilla-logo m-2" href="https://www.mozilla.org/">
+          Mozilla
+        </a>
+        <ul
+          class="flex flex-col md:flex-row items-start md:items-center md:justify-end"
+        >
+          <li class="m-2">
+            <a href="https://www.mozilla.org/about/legal/terms/services/#send">
+              Legal
+            </a>
+          </li>
+          <li class="m-2">
+            <a href="/legal"> Privacy </a>
+          </li>
+          <li class="m-2">
+            <a href="https://www.mozilla.org/privacy/websites/#cookies">
+              Cookies
+            </a>
+          </li>
+          <li class="m-2">
+            <a href="https://github.com/mozilla/send">GitHub </a>
+          </li>
+          <li class="m-2">
+            <a
+              href="https://qsurvey.mozilla.com/s3/Firefox-Send-Product-Feedback?ver=3.0.21&amp;browser=unknown"
+              rel="noreferrer noopener"
+              class="feedback-link"
+              alt="Feedback"
+              target="_blank"
+            >
+              Feedback
+            </a>
+          </li>
+        </ul>
+      </footer>
+    
+      </body>
+     
+        <script nonce="69942db7b7cd48ca87a9c9202d840f73">
+          
+  var isIE = /trident\/7.|msie/i.test(navigator.userAgent);
+  var isUnsupportedPage = /\/unsupported/.test(location.pathname);
+  if (isIE && !isUnsupportedPage) {
+    window.location.assign('/unsupported/ie');
+  }
+  if (
+    // Firefox < 50
+    /firefox/i.test(navigator.userAgent) &&
+    parseInt(navigator.userAgent.match(/firefox\/*([^\n\r]*)./i)[1], 10) < 50
+  ) {
+    window.location.assign('/unsupported/outdated');
+  }
+
+  var LIMITS = {"ANON":{"MAX_FILE_SIZE":1073741824,"MAX_DOWNLOADS":1,"MAX_EXPIRE_SECONDS":86400},"MAX_FILE_SIZE":2684354560,"MAX_DOWNLOADS":100,"MAX_EXPIRE_SECONDS":604800,"MAX_FILES_PER_ARCHIVE":64,"MAX_ARCHIVES_PER_USER":16};
+  var DEFAULTS = {"DOWNLOAD_COUNTS":[1,2,3,4,5,20,50,100],"EXPIRE_TIMES_SECONDS":[300,3600,86400,604800],"EXPIRE_SECONDS":86400};
+  var PREFS = {};
+  var downloadMetadata = {"nonce":"38cZsa6xTbhoK1YqQlyfAg==","pwd":false};
+  var AUTH_CONFIG = {"authorization_endpoint":"https://accounts.firefox.com/authorization","introspection_endpoint":"https://oauth.accounts.firefox.com/v1/introspect","issuer":"https://accounts.firefox.com","jwks_uri":"https://oauth.accounts.firefox.com/v1/jwks","revocation_endpoint":"https://oauth.accounts.firefox.com/v1/destroy","token_endpoint":"https://oauth.accounts.firefox.com/v1/token","userinfo_endpoint":"https://profile.accounts.firefox.com/v1/profile","claims_supported":["aud","exp","iat","iss","sub"],"id_token_signing_alg_values_supported":["RS256"],"response_types_supported":["code","token"],"scopes_supported":["openid","profile","email"],"subject_types_supported":["public"],"token_endpoint_auth_methods_supported":["client_secret_post"],"key_scope":"https://identity.mozilla.com/apps/send","client_id":"1f30e32975ae5112"};;
+  
+var SENTRY_CONFIG = {
+  dsn: 'https://19f0b72804bf4066a5cf854251a96de3@sentry.prod.mozaws.net/252',
+  release: 'v3.0.21',
+  beforeSend: function (data) {
+    var hash = window.location.hash;
+    if (hash) {
+      return JSON.parse(JSON.stringify(data).replace(new RegExp(hash.slice(1), 'g'), ''));
+    }
+    return data;
+  }
+}
+
+  ;
+        </script>
+      
+    </html>
+  

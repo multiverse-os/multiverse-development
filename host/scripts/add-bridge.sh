@@ -1,4 +1,5 @@
 #!/bin/sh
+###############################################################################
 
 if [ -z "$1" ]; then
 	echo "[error] Bridge XML undefined. Must specify path to bridge XML."

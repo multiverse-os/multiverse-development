@@ -1,0 +1,106 @@
+From 740de0213c5af364612c657c556b4b3aa99dc7d5 Mon Sep 17 00:00:00 2001
+From: Christian Svensson <bluecmd@google.com>
+Date: Thu, 5 Sep 2019 13:53:46 -0700
+Subject: [PATCH 4/4] arch: define aspeed SOC IO mapping
+
+Without this IO mapping early printk will simply not work after the
+paging and MMU has been setup.
+
+Signed-off-by: Christian Svensson <bluecmd@google.com>
+---
+ arch/arm/mach-aspeed/Makefile     |  2 ++
+ arch/arm/mach-aspeed/aspeed_soc.c | 47 +++++++++++++++++++++++++++++++
+ arch/arm/mach-aspeed/iomap.h      | 17 +++++++++++
+ 3 files changed, 66 insertions(+)
+ create mode 100644 arch/arm/mach-aspeed/aspeed_soc.c
+ create mode 100644 arch/arm/mach-aspeed/iomap.h
+
+diff --git a/arch/arm/mach-aspeed/Makefile b/arch/arm/mach-aspeed/Makefile
+index 1951b3317a76..4d6fa9c77136 100644
+--- a/arch/arm/mach-aspeed/Makefile
++++ b/arch/arm/mach-aspeed/Makefile
+@@ -3,3 +3,5 @@
+ # Copyright IBM Corp.
+ 
+ obj-$(CONFIG_SMP) += platsmp.o
++
++obj-y := aspeed_soc.o
+diff --git a/arch/arm/mach-aspeed/aspeed_soc.c b/arch/arm/mach-aspeed/aspeed_soc.c
+new file mode 100644
+index 000000000000..187276c2813d
+--- /dev/null
++++ b/arch/arm/mach-aspeed/aspeed_soc.c
+@@ -0,0 +1,47 @@
++/*
++ * Copyright (C) 2018 Google, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/init.h>
++#include <linux/of_platform.h>
++
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++
++#include "iomap.h"
++
++// This is needed for e.g. earlyprintk
++static struct map_desc io_desc[] __initdata = {
++	{
++		.virtual = AST_IO_VIRT,
++		.pfn = __phys_to_pfn(AST_IO_PHYS),
++		.length = AST_IO_SIZE,
++		.type = MT_DEVICE
++	}
++};
++
++static void __init aspeed_map_io(void)
++{
++	iotable_init(io_desc, ARRAY_SIZE(io_desc));
++}
++
++static const char * const aspeed_compat[] = {
++	"aspeed,ast2400",
++	"aspeed,ast2500",
++	NULL
++};
++
++DT_MACHINE_START(ASPEED_DT, "Aspeed SoC")
++	.map_io = aspeed_map_io,
++	.dt_compat = aspeed_compat,
++MACHINE_END
+diff --git a/arch/arm/mach-aspeed/iomap.h b/arch/arm/mach-aspeed/iomap.h
+new file mode 100644
+index 000000000000..7ea5276f3892
+--- /dev/null
++++ b/arch/arm/mach-aspeed/iomap.h
+@@ -0,0 +1,17 @@
++/*
++ * Copyright (C) 2018 Google, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#define AST_IO_PHYS 0x1e600000
++#define AST_IO_VIRT 0xfe600000
++#define AST_IO_SIZE 0x00200000
+-- 
+2.23.0.187.g17f5b7556c-goog
+

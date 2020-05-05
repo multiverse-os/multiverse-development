@@ -1,12 +1,12 @@
 # /etc/modules: kernel modules to load at boot time.
-
-#
+###############################################################################
 # Multiverse OS Modules
 ###############################################################################
-
-# IOMMU
+#### IOMMU
 vfio
 vfio_iommu_type1
 vfio_pci
 vfio_virqfd
-
+#### KVM
+kvm
+kvm_intel

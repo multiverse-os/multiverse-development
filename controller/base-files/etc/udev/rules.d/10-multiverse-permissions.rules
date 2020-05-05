@@ -1,0 +1,5 @@
+# Grant /dev/vfio ownership to root:libvirt
+SUBSYSTEM=="vfio" OWNER="root" GROUP="libvirt" MODE="0660"
+KERNEL=="vsock" OWNER="root" GROUP="libvirt" MODE="0660"
+KERNEL=="vhost-vsock" OWNER="root" GROUP="libvirt" MODE="0660"
+KERNEL=="vhost-net" OWNER="root" GROUP="libvirt" MODE="0660"

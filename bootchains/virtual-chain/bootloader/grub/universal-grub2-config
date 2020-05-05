@@ -1,0 +1,29 @@
+#=============================================================================#
+#                                                                             #
+# Multiverse OS Universal Grub2 Configuration Values                          #
+#-----------------------------------------------------------------------------#
+#
+DEFAULT="quiet"
+KVM="intel_iommu=on" # TODO: Need an if switch for AMD/Intel
+VIDEO="nomodeset"
+CPUS="isolcpus=1-6,11-16"
+#
+#
+## TODO: Determine the system type which will later be provided by binary 
+##       that will check different aspects of the system to determine its
+##       Multiverse VM class.
+#
+DISTRIBUTOR="Multiverse OS: Bare-metal Host"
+#
+#=============================================================================#
+## Multiverse Component                                                      ##
+#-----------------------------------------------------------------------------#
+#
+GRUB_DEFAULT=0                                   
+GRUB_TIMEOUT=5                                   
+GRUB_DISTRIBUTOR="Multiverse OS: Bare-metal Host"
+GRUB_CMDLINE_LINUX_DEFAULT="$DEFAULT $KVM $VIDEO $CPUS"
+GRUB_CMDLINE_LINUX=""                            
+#
+#=============================================================================#
+

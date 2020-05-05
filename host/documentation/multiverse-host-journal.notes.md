@@ -1,13 +1,14 @@
 ## HOST Development Roadmap 
-Guide to developing Multiverse OS componetns required for the HOST AGENT operation, defense (honey-pots, other traps, lockdown, etc), VM contorl, autostart, reboots, etc.
+Guide to developing Multiverse OS componetns required for the HOST AGENT operation, defense *honey-pots, other traps, lockdown, etc*, VM contorl, autostart, reboots, etc. ...
 
 	* HOST should be modified so that /home /var and /tmp are separated.
-	  then these can be mounted from *.raw or *.qcow2 (same with
+	  then these can be mounted from \*.raw or \*.qcow2 (same with
 	  controller)
 
 
 
 ## Networking Updates
+
 After learning about **netmap** a super high speed user space network model 
 utilizing **pf_ring**. 
 
@@ -20,8 +21,7 @@ choice with the entire network stack put on the device.
 
 
 
-
-____________________________________________________________________________
+______
 ## Moving to two (2) CONTROLLER model
 
  (1) USER CONTROLLER, interface for user to interact with nested
@@ -35,7 +35,7 @@ ____________________________________________________________________________
  (2) ROUTER CONTROLLER
      _passthrough of network devices_
 
-````
+```
 <network>
   <name>passthrough0</name>
   <forward mode='hostdev'  managed='yes'>
@@ -43,8 +43,9 @@ ____________________________________________________________________________
   </forward>
 </network>
 
-````[exit with `:wq passthrough.xml`]
-then define it after setting it up (can define it with various options or better owuld be create defitnions on the fly based on the varibales that wec can fill in, then create a (dunno webform?) to input the data and create the XML then auto-define it (see extra task that should not exist really below, again why we are getting rid of libvirt).
+```
+
+[exit with `:wq passthrough.xml`] then define it after setting it up (can define it with various options or better owuld be create defitnions on the fly based on the varibales that wec can fill in, then create a (dunno webform?) to input the data and create the XML then auto-define it (see extra task that should not exist really below, again why we are getting rid of libvirt).
 
 
 `virsh net-define passthrough0.xml`
@@ -53,17 +54,17 @@ then define it after setting it up (can define it with various options or better
 
 [QUESTION][Is name the name of the device on the VM? This could be useful is so]
   
-  [__ <hostdev> (conventional) VS. <virtualprot>
+  [__ <hostdev> (*conventional*) VS. <virtualprot>
    
 
-  [*] There are two (2) ways of doing passthrough now:
+  [*] There are two (*2*) ways of doing passthrough now:
     (1)[conventional method is with the <hostdev> element]
       straight forward
 
     (2)[the new method is using <interface type="hostdev"> element]
 
       add two (2) new elements:
-        [1] virtual port with attribute `type` can take value like 802.1Qbh to mimic wireless card virtually.
+        [1] virtual port with attribute `type` can take value like `802.1Qbh` to mimic wireless card virtually.
 
        [!][USECASE]**During the development of Multiverse OS, we talked about wanting to use `mpath tcp` basically let packets travel DIFFERNET paths to a server, then let the sevver reassemble the packets from different sources**
    this has several interesting consequences:

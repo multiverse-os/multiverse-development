@@ -31,9 +31,11 @@ LIST_ALL=1
 UBUNTU_PORTAL="ubuntu18-04.ui.portal"
 DEBIAN_PORTAL="debian8.interface.portal"
 # Network VMs
-NET0BR0="universe0"
-NET0BR1="galaxy0"
-NET0BR2="star-whonix"
+## TODO: These seem like they can be generated via loop over # of NIC cards
+NET0BR0="net0br0"
+NET0BR0_ROUTER="network0.bridge0.router"
+NET0BR1="net0br1"
+NET0BR1_ROUTER="network0.bridge1.router"
 # Default Controller (Mount when nothing is specific)
 PORTAL=""
 DEFAULT_CONTROLLER=$UBUNTU_PORTAL
@@ -66,34 +68,36 @@ list_vms() {
 }
 
 start_router_vms() {
-	echo "$subheaderStarting NETWORK 0$reset"
+	## 
+	## TODO: Must iterate over loop of # of NICs setting up network 
+	##       per network. 
+	## 
+
+
+	#======================================================================
 	# Network 0
-	echo -e "$textBooting up Universe0 and Universe1 routers and starting the corresponding networks...$reset"
-	# Network 0
-	virsh start universe0.router.portal
-	# Network 1
-	#virsh start universe1.router.portal
+	echo "$subheaderStarting [ NETWORK 0 ]$reset"
+	echo -e "$textBooting up [ NETWORK 0 ]: net0br0 and net0br1...$reset"
+	virsh start network0.bridge0.router
+	virsh start network0.bridge1.router
 	sleep 10
-	echo -e "$textBooting galaxy0 for Universe0 and galaxy0 for Universe1...$reset"
-	#=================================================================================
-	echo "$subheaderStarting NETWORK 1$reset"
+	echo -e "$textCompleted booting [ NETWORK 0 ] bridges.$reset"
+	#======================================================================
 	# Network 1
-	virsh start galaxy0.router.universe0
-	# Network 1
-	#virsh start galaxy0.router.universe1
+	echo "$subheaderStarting [ NETWORK 1 ]$reset"
+	echo -e "$textBooting up [ NETWORK 1 ]: net0br0 and net0br1...$reset"
+	virsh start network1.bridge0.router
+	virsh start network1.bridge1.router
 	sleep 5
-	echo -e "$textBooting star0 for Universe0 and star0 for Universe1...$reset"
-	# Network 0
-	virsh start star0.whonix-router.universe0
-	# Network 1
-	#virsh start star0.whonix-router.universe1
-	echo -e "$textAll routers booted, ready to start the user interface controller portal...$reset"
-	echo -e "$textChecking status of routers and networks...$reset"
-	echo -e "$green"
+	echo -e "$textCompleted booting [ NETWORK 1 ] bridges.$reset"
+	#======================================================================
+	# Completed, Checking status...
+	#======================================================================
+	echo -e "$text[ Multiverse OS: Networking ]"
+	echo -e "$textChecking status of routers and networks...$reset$green"
 	list_vms
-	echo -e "$reset"
-	echo -e "$subheader======[^] ROUTER VMs Successfully Luanched [^]=====$reset"
-	echo -e "Options for User Interface Controllers:"
+	echo -e "$reset$subheader=[^] VMs Successfully Luanched [^]=$reset"
+	echo -e "Available Controllers, select one to boot:"
 	echo -e "$successCONTROLLER VMs$reset"
 	echo -e "$success"
 	virsh list --all | grep controller
