@@ -16,6 +16,17 @@
 vfio-bind 8086:a2af
 #vfio-bind 00:14.0
 
+## TODO: These binds should be based on the output of lspci, so generate 
+##       the list, pass it through for each:
+##
+##		`vfio-bind vendor_id:device_id`
+##
+##       For essentially all devices, including all USB devices. Switching 
+##       to the host will cease to be a thing in the alpha release unless
+##       in an emergency recovery scenerio. And the usb with the keyboard 
+##       attached can be passed back and forth as needed eaisly. 
+##                  
+
 
 ## Video Graphics Card (VGA) ###################################################
 #19:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Device [1002:6863]

@@ -1,2 +1,18 @@
+# Multiverse OS: Device 
+
 # Grant /dev/vfio ownership to root:libvirt
-SUBSYSTEM=="vfio" OWNER="root" GROUP="kvm" MODE="0660"
+SUBSYSTEM=="vfio" OWNER="root" GROUP="libvirt" MODE="0660"
+
+
+
+
+
+
+
+
+
+
+# Experimental ################################################################
+#ACTION=="add" SUBSYSTEM=="module" KERNEL=="fuse" RUN+="/var/multiverse/fuse-log.sh"
+#
+###############################################################################

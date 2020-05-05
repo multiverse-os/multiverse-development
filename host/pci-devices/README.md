@@ -40,16 +40,21 @@ An example `rc.local` using the Multiverse OS shell framework module for simplif
 
 ```
 #!/bin/sh
+###############################################################################
 
+###############################################################################
 # IMPORT 'vfio-management' component of Multiverse Shell Framework
-. /home/user/multiverse-os/scripts/sh-framework/modules/multiverse/vfio-management.sh
+. /home/user/multiverse/sh/modules/vfio-management.sh
+###############################################################################
 
-#==(PCI Device Passthrough)==#
-# Network PCI Devices
+###############################################################################
+# PCI Devices To Prepare For VFIO Passthrough 
+###############################################################################
 passthrough net 8086:15b8
 passthrough net 8086:1539
 passthrough net 1ae9:0310
 passthrough net 168c:003e
+###############################################################################
 
 
 exit 0

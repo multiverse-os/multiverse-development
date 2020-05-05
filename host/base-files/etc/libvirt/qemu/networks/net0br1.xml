@@ -1,0 +1,14 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh net-edit net0br1
+or other application using the libvirt API.
+-->
+
+<network>
+  <name>net0br1</name>
+  <uuid>5ff22444-d4db-4ed0-aa35-fc64392e205d</uuid>
+  <bridge name='net0br1' stp='on' delay='0'/>
+  <mac address='00:00:10:01:01:fe'/>
+  <domain name='net0br1'/>
+</network>
