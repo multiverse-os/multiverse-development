@@ -7,6 +7,7 @@ alpha-release
 alpha-release/*
 development
 development/*
+development/alpha-release
 
 # Various VM Images
 *.qcow2

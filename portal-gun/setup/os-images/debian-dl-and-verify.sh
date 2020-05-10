@@ -12,7 +12,7 @@ reset="\e[0m"
 start_dir=$(pwd)
 
 MAJOR="10"
-MINOR="2"
+MINOR="3"
 PATCH="0"
 
 DL_PATH="$(pwd)"

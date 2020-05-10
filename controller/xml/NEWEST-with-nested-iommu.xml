@@ -409,6 +409,7 @@
       <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
     </memballoon>
   </devices>
+  <iommu model='intel' />
   <seclabel type='none' model='none'/>
   <qemu:commandline>
     <qemu:arg value='-cpu'/>

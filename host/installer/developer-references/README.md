@@ -1,4 +1,58 @@
 ## Multiverse OS: Installer
+### Status of Go installer:
+#### Host installer
+- [ ] Replace manual base Debian install
+- [ ] Merge old install scripts:
+  - [x] ./multiverse-setup
+  - [x] ../provision-host.sh
+  - [x] ../scripts/provision.sh
+  - Other ../scripts/ ?
+- [x] Correctly install grub based on CPU manufacturer/architecture
+- [ ] Initialize password storage (until scramble suite key system is in place)
+  - [ ] Create GPG key
+  - [ ] `pass init {key_name}`
+- [ ] Setup vfio devices
+  - Unbind NIC card(s) (see line 445 of install-host.md and onward for vfio binding notes)
+  - Rebind to vfio
+  - Replacement for /etc/rc.local?
+- [ ] Setup router vms and networking
+  - Ideally using portal gun
+  - Waiting for vsock replacement for qemu bridges
+- [ ] Set up paths for copying files better instead of cd-ing
+- [ ] Make interactive TUI
+  - Use [https://github.com/AlecAivazis/survey]()
+- ...?
+- Reviewed:
+  - [x] ./install.host.md
+    - Many specifics out of date, but most explanatory notes still apply
+
+#### Controller installer
+- [ ] Everything
+
+#### ISO download scripts
+- [ ] Convert them to go
+
+### Misc
+- `noatime` in fstab for less disk writes
+- Another version of the provision script installed more packages. Investigate
+  which are actually wanted. Might be explicitly downloading "recommended"
+  packages that would otherwise be pulled in by the smaller set of packages.
+
+```
+patch rsync gnupg2 ssh ssh-askpass tor tree \
+	qemu-kvm qemu-utils ovmf \
+	qemu-system-x86 qemu-user-static qemu-utils libpam-cap \
+	libvirt0 libvirt-dev libvirt-clients libvirt-daemon libvirt-daemon-system \
+	pkg-config libfile-fcntllock-perl \
+	bridge-utils ebtables libxml2-utils netcat-openbsd iproute2 dmidecode dnsmasq-base
+
+# in Debian Buster, the packages have a different name in Debian Stretch
+gir1.2-spiceclientglib-2.0 gir1.2-spiceclientgtk-3.0
+```
+
+
+
+### Old notes
 *This README.md is out of date and will either be removed or updated to help explain the procses of upgrading the manual installation guides developers used throughout research and development of Multiverse OS, the eventual shell scripts to simplify the process and the compilation and conversion to Go and an addition of a UI to produce the first Multiverse alpha installer.*
 
 Multiverse OS originally was going to rely on the Debian9 installer but as the complexity of the project grew it became clear it would be better to simply implement a installer that would be consistent with the rest of the primary UI components and fit in with the rest of the machine building security precuations.
