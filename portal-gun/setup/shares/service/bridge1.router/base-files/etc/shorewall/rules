@@ -16,4 +16,4 @@
 ?SECTION UNTRACKED
 ?SECTION NEW
 # Example 
-#DNAT 	vpn 	gal:10.1.1.5 	tcp 	41237
+#DNAT 	vpn 	bridge1:10.1.1.5 	tcp 	41237

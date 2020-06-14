@@ -9,8 +9,8 @@
 ###############################################################################
 #SOURCE		DEST		POLICY	LOGLEVEL	RATE	CONNLIMIT
 fw		all		ACCEPT
-uni		lan		ACCEPT
-uni		wan		ACCEPT
-#all		all		DROP
+bridge0		lan		ACCEPT
+bridge0		wan		ACCEPT
+all		all		DROP
 # DEBUG
-all		all		ACCEPT
+#all		all		ACCEPT

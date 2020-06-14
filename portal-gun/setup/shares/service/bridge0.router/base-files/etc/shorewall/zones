@@ -12,4 +12,4 @@
 fw		firewall
 wan		ipv4
 lan:wan		ipv4
-uni		ipv4
+bridge0		ipv4

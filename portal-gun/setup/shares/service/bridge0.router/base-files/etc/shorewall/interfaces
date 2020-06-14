@@ -10,4 +10,4 @@
 ###############################################################################
 #ZONE		INTERFACE		OPTIONS
 wan		eth1			routefilter,tcpflags,logmartians,nosmurfs,sourceroute=0
-uni		eth0			dhcp,routefilter,tcpflags,logmartians,nosmurfs
+bridge0		eth0			dhcp,routefilter,tcpflags,logmartians,nosmurfs

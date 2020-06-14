@@ -9,9 +9,9 @@
 ###############################################################################
 #SOURCE		DEST		POLICY	LOGLEVEL	RATE	CONNLIMIT
 fw		all		ACCEPT
-gal		vpn		ACCEPT
-gal		lan		DROP
-gal		uni		DROP
+bridge1		vpn		ACCEPT
+bridge1		lan		DROP
+bridge1		bridge0		DROP
 all		all		DROP
 ## DEBUG ######################################################################
 ## To assist debugging  comment out 'all all DROP` line above and uncomment

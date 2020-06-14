@@ -18,7 +18,7 @@ template VM.
 
 #### Provisioning
 Currently provisioning does a link from the portal, but the portal should be
-used to setup multiple galaxy routers, and to scale up automatically based off
+used to setup multiple bridge1 routers, and to scale up automatically based off
 a generic portal setttings files. Then we need to `cp` instead of just `link -s`.
 
 Need to also work out the alpine answers file, custom grub to allow sumbission
@@ -27,7 +27,7 @@ of keys, text, and so on.
 The current sollution is to cp the files into a local 'base-files' then create
 symbolic links from there. The advantage of this is that we can make the base-files
 a git and if changes are made that are meant to be merged so that the change is 
-reflected in all other iterations of this VM i.e. galaxy0, galaxy1, galaxy2, etc
+reflected in all other iterations of this VM i.e. bridge1, bridge11, bridge12, etc
 
 
 #### Ephemerality

@@ -10,5 +10,5 @@
 ###############################################################################
 #ZONE		INTERFACE		OPTIONS
 wan		eth0			routefilter,tcpflags,logmartians,nosmurfs
-gal		eth1			dhcp,routefilter,tcpflags,logmartians,nosmurfs
+bridge1		eth1			dhcp,routefilter,tcpflags,logmartians,nosmurfs
 vpn		tun0			nosmurfs,tcpflags

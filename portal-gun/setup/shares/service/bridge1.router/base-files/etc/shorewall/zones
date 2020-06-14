@@ -11,7 +11,7 @@
 
 fw		firewall
 wan		ipv4
-uni:wan		ipv4
+bridge0:wan		ipv4
 lan		ipv4
-gal		ipv4
+bridge1		ipv4
 vpn		ipv4

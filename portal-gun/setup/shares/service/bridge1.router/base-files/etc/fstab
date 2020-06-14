@@ -1,6 +1,0 @@
-UUID=bc5a9979-42c6-4e2f-8fe5-2772a140c3ee	/	ext4	rw,relatime,data=ordered 0 1
-UUID=a7528ee4-b849-4668-975f-9e3acd972197	/boot	ext4	rw,relatime,data=ordered 0 2
-UUID=9a5d2e09-09ef-4ef4-831d-091e1494061f	swap	swap	defaults	0 0
-
-# Multiverse OS Portal Share
-galaxy-portal /mnt/galaxy-portal 9p trans=virtio,9p2000.L,rw,posixacl,cache=none,nofail 0 0
