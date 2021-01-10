@@ -1,0 +1,5 @@
+GRUB_DEFAULT=0                                   
+GRUB_TIMEOUT=5                                   
+GRUB_DISTRIBUTOR="Multiverse OS: Host"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on"  
+GRUB_CMDLINE_LINUX=""                            

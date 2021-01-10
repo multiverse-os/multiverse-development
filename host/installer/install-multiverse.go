@@ -13,19 +13,37 @@ import (
 	"github.com/zcalusic/sysinfo"
 )
 
-const (
-	USER_HOME      = "/home/user"
-	GIT_SRC_PATH   = USER_HOME + "/multiverse"
-	MV_CONFIG_PATH = "/etc/multiverse"
-	MV_SYSTEM_PATH = "/var/multiverse"
-)
+type Provision struct {
+	User User
+
+	Paths Paths
+}
+
+
+type Paths struct {
+	Home string
+	Git string
+	Etc string
+	Var string
+}
+
+func Provisioner() Provision {
+	return Provision{
+		Paths: Paths{
+		Home: "/home/user",
+		Git: "/var/multiverse/development",
+		Etc: "/etc/multiverse",
+		Var: "/var/multiverse",
+	}
+   }
+}
 
 type User struct {
 	uid int
 	gid int
 }
 
-var uzr User
+var usr User
 
 // # Multiverse OS Script Color Palette
 // #==============================================================================
@@ -51,13 +69,14 @@ func Fail(text string) string    { return color.Red(text) }
 // funcs
 
 func main() {
+	provisioner := Provisioner()
 	// Check if superuser
-	current, err := user.Current()
+	provisioner.user, err := user.Current()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if current.Uid != "0" {
+	if provisioner.user.Uid != "0" {
 		log.Fatal(Fail("Must be superuser"))
 	}
 
@@ -139,49 +158,49 @@ func AskRetry(s step) error {
 	return nil
 }
 
-func CreateMultiversePaths() error {
-	if err := CreateDir(MV_SYSTEM_PATH, 0700, uzr.uid, uzr.gid); err != nil {
+func (self *Provisioner) CreateMultiversePaths() error {
+	if err := CreateDir(self.Var, 0700, usr.uid, usr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portal-gun", 0700, uzr.uid, uzr.gid); err != nil {
+	if err := CreateDir(self.Var+"/portal-gun", 0700, usr.uid, usr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portal-gun/os-image", 0700, uzr.uid, uzr.gid); err != nil {
+	if err := CreateDir(self.Var+"/portal-gun/os-image", 0700, usr.uid, usr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/share", 0700, uzr.uid, uzr.gid); err != nil {
+	if err := CreateDir(self.Var+"/portals/share", 0700, usr.uid, usr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals", 0700, uzr.uid, uzr.gid); err != nil {
+	if err := CreateDir(self.Var+"/portals", 0700, usr.uid, usr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets", 0700, uzr.uid, uzr.gid); err != nil {
+	if err := CreateDir(self.Var+"/portals/sockets", 0700, usr.uid, usr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/serial", 0700, uzr.uid, uzr.gid); err != nil {
+	if err := CreateDir(self.Var+"/portals/sockets/serial", 0700, usr.uid, usr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/channel", 0700, uzr.uid, uzr.gid); err != nil {
+	if err := CreateDir(self.Var+"/portals/sockets/channel", 0700, usr.uid, usr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/console", 0700, uzr.uid, uzr.gid); err != nil {
+	if err := CreateDir(self.Var+"/portals/sockets/console", 0700, usr.uid, usr.gid); err != nil {
 		return err
 	}
-	if err := CreateDir(MV_SYSTEM_PATH+"/portals/sockets/parallel", 0700, uzr.uid, uzr.gid); err != nil {
+	if err := CreateDir(self.Var+"/portals/sockets/parallel", 0700, usr.uid, usr.gid); err != nil {
 	}
 	// Because libvirt recreates its default image folder if it's not detected,
 	// let's link it to our primary default
-	if err := os.Remove(USER_HOME + "/.local/share/libvirt/images"); err != nil {
+	if err := os.Remove(self.Home + "/.local/share/libvirt/images"); err != nil {
 	}
-	if err := CreateDir(USER_HOME+"/.local/share/libvirt", 0755, uzr.uid, uzr.gid); err != nil {
+	if err := CreateDir(self.Home+"/.local/share/libvirt", 0755, usr.uid, usr.gid); err != nil {
 	}
-	if err := os.Symlink(MV_SYSTEM_PATH+"/portals/disks/", USER_HOME+"/.local/share/libvirt/images"); err != nil {
+	if err := os.Symlink(self.Var+"/portals/disks/", self.Home+"/.local/share/libvirt/images"); err != nil {
 	}
 
 	return nil
 }
 
-func SetupUser() error {
+func (self *Provisioner) SetupUser() error {
 	uzer, err := user.Lookup("user")
 	if err != nil {
 		log.Println(Fail("User 'user' required"))
@@ -192,22 +211,22 @@ func SetupUser() error {
 	if err != nil {
 		return err
 	}
-	uzr.uid = uid
+	usr.uid = uid
 
 	gid, err := strconv.Atoi(uzer.Gid)
 	if err != nil {
 		return err
 	}
-	uzr.gid = gid
+	usr.gid = gid
 
-	if uzer.HomeDir != USER_HOME {
+	if uzer.HomeDir != self.Paths.Home {
 		log.Printf("User home directory mismatch, setting it to '%v'\n", USER_HOME)
-		uzer.HomeDir = USER_HOME
+		uzer.HomeDir = self.Path.Home
 	}
-	if err := os.Remove(USER_HOME + "/Desktop"); err != nil {
+	if err := os.Remove(self.Paths.Home + "/Desktop"); err != nil {
 		log.Printf(Warning(fmt.Sprintf("Cannot remove directory, %v\n", err)))
 	}
-	if err := os.Remove(USER_HOME + "/Downloads"); err != nil {
+	if err := os.Remove(self.Paths.Home + "/Downloads"); err != nil {
 		log.Printf(Warning(fmt.Sprintf("Cannot remove directory, %v\n", err)))
 	}
 	if err := os.Remove(USER_HOME + "/Documents"); err != nil {
@@ -252,7 +271,7 @@ func DownloadConfigFiles() error {
 	//cd USER_HOME/multiverse/ && rm -rf sh && git clone https://github.com/multiverse-os/sh
 	// TODO is os.Chown recursive or do I have to filewalk it?
 	if err := filepath.Walk(GIT_SRC_PATH, func(name string, info os.FileInfo, err error) error {
-		if err := os.Chown(name, uzr.uid, uzr.gid); err != nil {
+		if err := os.Chown(name, usr.uid, usr.gid); err != nil {
 			return err
 		}
 		return nil
@@ -266,15 +285,15 @@ func CopyGeneralConfigFiles() error {
 	// NOTE: Track all changes needed for setting up Multiverse, this will simplify the process and all these can be kept in /etc/multiverse and symbolically linked. Then the rest of the /et/multiverse folder can be custom Multiverse OS config files which will most likely be ruby or YAML based.
 	// TODO contemplate the implications of making these config files user
 	// editable
-	baseFilesPath := GIT_SRC_PATH + "/host/base-files"
-	if err := Copy(baseFilesPath+"/home/user/.gitconfig", USER_HOME+"/.gitconfig"); err != nil {
+	baseFilesPath := Provisioner.Paths.Git + "/host/base-files"
+	if err := Copy(baseFilesPath+"/home/user/.gitconfig", self.Home+"/.gitconfig"); err != nil {
 		return err
 	}
-	if err := os.Chown(USER_HOME+"/.gitconfig", uzr.uid, uzr.gid); err != nil {
+	if err := os.Chown(self.Home+"/.gitconfig", usr.uid, usr.gid); err != nil {
 		return err
 	}
 
-	if err := CreateDir("/etc/multiverse", 0700, uzr.uid, uzr.gid); err != nil {
+	if err := CreateDir("/etc/multiverse", 0700, usr.uid, usr.gid); err != nil {
 		return err
 	}
 	if err := Copy(baseFilesPath+"/etc/motd", "/etc/motd"); err != nil {
@@ -305,8 +324,8 @@ func CopyGeneralConfigFiles() error {
 	return nil
 }
 
-func DoProcessorSpecificConfig() error {
-	baseFilesPath := GIT_SRC_PATH + "/host/base-files"
+func (self *Provisioner) DoProcessorSpecificConfig() error {
+	baseFilesPath := self.Git + "/host/base-files"
 	var sInfo sysinfo.SysInfo
 	sInfo.GetSysInfo()
 	if sInfo.CPU.Vendor == "AuthenticAMD" {
@@ -330,8 +349,8 @@ func DoProcessorSpecificConfig() error {
 	return nil
 }
 
-func DoInitramfsConfig() error {
-	baseFilesPath := GIT_SRC_PATH + "/host/base-files"
+func (self *Provisioner) DoInitramfsConfig() error {
+	baseFilesPath := self.Git + "/host/base-files"
 	if err := Copy(baseFilesPath+"/etc/initramfs-tools/modules", "/etc/initramfs-tools/modules"); err != nil {
 		return err
 	}
