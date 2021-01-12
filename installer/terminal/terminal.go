@@ -1,5 +1,9 @@
 package terminal
 
-type Terminal package {
+type Terminal struct {
+	Stdout bytes.Buffer
+	Stderr bytes.Buffer
 	
+
+	History []string
 }

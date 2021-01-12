@@ -2,9 +2,10 @@ package install
 
 import (
 	"fmt"
-	"os/user"
 
 	machine "./machine"
+	terminal "./terminal"
+	cpu "./machine/hardware/cpu"
 
 	"github.com/zcalusic/sysinfo"
 )
@@ -16,6 +17,10 @@ type Packages struct {
 	Remove []string
 }
 
+type System struct {
+	CPU cpu.Architecture
+}
+
 // TODO: The idea is overtime this can be used to work to function as an 
 //       installer for various 
 type Installer struct {
@@ -23,6 +28,7 @@ type Installer struct {
 	User *User
 	Paths Paths
 	Packages Packages
+	System System
 }
 
 
@@ -52,49 +58,52 @@ func To(m machine.Type) (installer Installer) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self *Installer) Install() {
-	if !IsRoot() { panic(fmt.Errof("must be root")) }
+func (self *Installer) Install() (err error) {
+	if !IsRoot() { panic(fmt.Errorf("must be root")) }
 
 
 	//// User
-	AskRetry(SetupUser)
+	terminal.Output("Setting up user...")
+	AskRetry(self.SetupUser)
 
 	//// Packages
 	pm := NewPackageManager(Apt)
-	Output("Updating package lists...")
+	terminal.Output("Updating package lists...")
 	AskRetry(pm.Update)
-	Output("Upgrading packages...")
+	terminal.Output("Upgrading packages...")
 	AskRetry(pm.Upgrade)
-	Output("Installing packages...")
+	terminal.Output("Installing packages...")
 
 	if err = pm.RemovePackages(self.Packages.Remove); err != nil {
 		panic(fmt.Errorf("can't remove packages: %v\n", err))
 	}
 	if err := pm.InstallPackages(self.Packages.Install); err != nil {
-		panic(fmt.Errof("can't install packages: %v\n", err))
+		panic(fmt.Errorf("can't install packages: %v\n", err))
 	}
 
-	Output("Removing unnecessary packages......")
+	terminal.Output("Removing unnecessary packages......")
 	// TODO best way to call this with AskRetry. Global with list of packages?
 	AskRetry(pm.Autoremove)
 
-	Output("Creating default filepath....")
-	AskRetry(CreateMultiversePaths)
+	terminal.Output("Creating default filepath....")
+	AskRetry(self.CreateMultiversePaths)
 
 	//// Configurations
 	//// Install Config files
-	Output("Downloading default config files....")
-	AskRetry(DownloadConfigFiles)
+	terminal.Output("Downloading default config files....")
+	AskRetry(self.CloneGitRepository)
 
-	Output("Copying default config files....")
-	AskRetry(CopyGeneralConfigFiles)
+	terminal.Output("Copying default config files....")
+	AskRetry(self.CopyGeneralConfigFiles)
 
 	//// Enable IOMMU in grub
-	Output("Copying processor specific config files and enabling IOMMU in grub....")
-	AskRetry(DoProcessorSpecificConfig)
+	terminal.Output("Copying processor specific config files and enabling IOMMU in grub....")
+	AskRetry(self.DoProcessorSpecificConfig)
 
-	Output("Adding modules to initramfs....")
-	AskRetry(DoInitramfsConfig)
+	terminal.Output("Adding modules to initramfs....")
+	AskRetry(self.DoInitramfsConfig)
+
+	return err
 }
 
 
@@ -102,19 +111,19 @@ func (self *Installer) DoProcessorSpecificConfig() error {
 	var sInfo sysinfo.SysInfo
 	sInfo.GetSysInfo()
 	if sInfo.CPU.Vendor == "AuthenticAMD" {
-		err = Copy(self.Paths.BaseFile(machine.Host, "/etc/default/grub-amd"), "/etc/default/grub")
-		err = Copy(self.Paths.BaseFile(machine.Host, "/etc/modules-amd"), "/etc/modules")
+		Copy(self.Paths.BaseFile(machine.Host, "/etc/default/grub-amd"), "/etc/default/grub")
+		Copy(self.Paths.BaseFile(machine.Host, "/etc/modules-amd"), "/etc/modules")
 	} else if sInfo.CPU.Vendor == "GenuineIntel" {
-		err = Copy(self.Paths.BaseFile(machine.Host, "/etc/default/grub-intel"), "/etc/default/grub")
-		err = Copy(self.Paths.BaseFile(machine.Host, "/etc/modules-intel"), "/etc/modules")
+		Copy(self.Paths.BaseFile(machine.Host, "/etc/default/grub-intel"), "/etc/default/grub")
+		Copy(self.Paths.BaseFile(machine.Host, "/etc/modules-intel"), "/etc/modules")
 	}
-	err = Terminal("update-grub")
+	terminal.Run("update-grub")
 	return nil
 }
 
 func (self *Installer) DoInitramfsConfig() error {
 	err = Copy(self.BaseFile(machine.Host, "/etc/initramfs-tools/modules"), "/etc/initramfs-tools/modules")
-	err = Terminal("update-initramfs -u")
+	terminal.Run("update-initramfs -u")
 	return nil
 }
 

@@ -11,7 +11,7 @@ import (
 func (self *Installer) CopyGeneralConfigFiles() (err error) {
 	err = Copy(self.Paths.BaseFile(machine.Host, "/home/user/.gitconfig"), self.Paths.Home("/.gitconfig"))
 
-	err = self.ChangeOwnerToUser(self.Paths.Home("/.gitconfig"))
+	err = self.SetUserAsOwner(self.Paths.Home("/.gitconfig"))
 
 	err = self.CreateDirectory("/etc/multiverse")
 
