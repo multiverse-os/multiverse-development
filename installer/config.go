@@ -33,6 +33,7 @@ func (self *Installer) InstallFile(path string) error {
 
 func FileOrDirectoryExists(path string) bool {
 	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		fmt.Println("os.Stat ... !os.IsNotExist(err)")
 		return true
 	}
 	return false
@@ -42,7 +43,10 @@ func (self *Installer) CloneGitRepository() error {
 	// TODO: Better than erroring if the directory is already there is checking 
 	//       the git error and cd + git pull instead.
 	if FileOrDirectoryExists(self.Paths.GitPath) {
-		return Terminal(fmt.Sprintf("cd %s && git pull", self.Paths.GitPath))
+		fmt.Println("FileOrDirectoryExists('path')...")
+		fmt.Println("self.Paths.GitPath", self.Paths.GitPath)
+fmt.Printf("cd %s && git pull", self.Paths.GitPath)
+return nil
 	}else{
 		return Terminal(fmt.Sprintf("git clone https://github.com/multiverse-os/multiverse-development %s", self.Paths.GitPath))
 	}
