@@ -1,8 +1,0 @@
-<network>
-  <name>net1br2</name>
-  <bridge name='net1br2' stp='on' delay='0'/>
-  <mac address='00:00:10:12:12:fe'/>
-  <domain name='net1br2'/>
-  <ip address='10.12.12.254' netmask='255.255.255.0'>
-  </ip>
-</network>

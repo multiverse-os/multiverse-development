@@ -86,7 +86,7 @@ if [ "machine" = "$1" -o "m" = "$1" -o "machines" = "$1" ]; then
 		elif [ "stop" = "$3" -o "x" = "$3" ]; then
 			# Network 1
 			echo "[$_command_name] Starting network 0, bridge 0, and bridge 1..."
-			sh $"_cmd $_global_flags stop network0.bridge0.router"
+			sh "$_cmd $_global_flags stop network0.bridge0.router"
 			sh "$_cmd $_global_flags stop network0.bridge1.router"
 			echo "[$_command_name] Starting network 1, bridge 0, and bridge 1..."
 			sh "$_cmd $_global_flags stop network1.bridge0.router"
