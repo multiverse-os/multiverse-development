@@ -25,7 +25,7 @@ func IsRoot() bool {
 	if err != nil {
 		return false
 	}
-	return (u.Uid != "0")
+	return (u.Uid == "0")
 
 }
 

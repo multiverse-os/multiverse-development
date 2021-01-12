@@ -1,6 +1,7 @@
 package install
 
 import (
+	"os"
 	"fmt"
 	"path/filepath"
 	
@@ -30,10 +31,21 @@ func (self *Installer) InstallFile(path string) error {
 	return Copy(self.Paths.BaseFile(machine.Host, path), path)
 }
 
+func FileOrDirectoryExists(path string) bool {
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		return true
+	}
+	return false
+}
+
 func (self *Installer) CloneGitRepository() error {
 	// TODO: Better than erroring if the directory is already there is checking 
 	//       the git error and cd + git pull instead.
-	return Terminal(fmt.Sprintf("git clone https://github.com/multiverse-os/multiverse-development %s", self.Paths.GitPath))
+	if FileOrDirectoryExists(self.Paths.GitPath) {
+		return Terminal(fmt.Sprintf("cd %s && git pull", self.Paths.GitPath))
+	}else{
+		return Terminal(fmt.Sprintf("git clone https://github.com/multiverse-os/multiverse-development %s", self.Paths.GitPath))
+	}
 }
 
 func (self *Installer) ParseConfigFiles() (files []string, err error) {
