@@ -1,4 +1,7 @@
-====[ Multiverse OS: universe0.multiverse.host ]===========
+package motd
+
+func Motd() string {
+return `====[ Multiverse OS: universe0.multiverse.host ]===========
 ||                                                       ||
 ||   1 Baremetal Host                                    ||
 ||     (Populate information about hosts                 ||
@@ -34,5 +37,7 @@
 ||     (Populate information about microphones           ||
 ||                                                       ||
 ||                                                       ||
-============================[ Based on Debian GNU/Linux ]==
+============================[ Based on Debian GNU/Linux ]==`
+}
+
 

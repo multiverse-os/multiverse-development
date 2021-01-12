@@ -1,14 +1,25 @@
 # /etc/modules: kernel modules to load at boot time.
 #
-# This file contains the names of kernel modules that should be loaded
-# at boot time, one per line. Lines beginning with "#" are ignored.
+# Multiverse OS: Bare-metal Host Kernel Module Declaration
+##############################################################################
+## VFIO
+##############################################################################
 vfio
 vfio-pci
-
+vfio_iommu_type1
+vfio_virqfd
+##############################################################################
+## KVM
+##############################################################################
+kvm
+kvm_intel
+##############################################################################
+## VHOST
+##############################################################################
+# NOTE: Do not enable on HOST machine
+# VHost Networking
+# vhost_vsock
+##############################################################################
 9p
 9pnet
 9pnet_virtio
-
-kvm
-kvm_intel
-
