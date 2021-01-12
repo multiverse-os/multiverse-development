@@ -1,5 +1,12 @@
 package install
 
+import (
+	"os"
+	"fmt"
+
+	machine "./machine"
+)
+
 type Paths struct {
 	HomePath string
 	GitPath string
@@ -8,25 +15,27 @@ type Paths struct {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self *Installer) CreateDirectory(path string) error { return CreateDir(path, 0700, self.User.uid, self.User.gid) }
+func (self *Installer) CreateDirectory(path string) error { 
+	return CreateDir(path, 0700, self.User.UID, self.User.GID)
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 func (self *Installer) CreateMultiversePaths() (err error) {
-	err = self.CreateDirectory(self.Paths.VarPath)
-	err = self.CreateDirectory(self.Paths.Var("/portal-gun/os-image"))
-	err = self.CreateDirectory(self.Paths.Var("/portals/share"))
-	err = self.CreateDirectory(self.Paths.Var("/portals"))
-	err = self.CreateDirectory(self.Paths.Var("/portals/sockets"))
-	err = self.CreateDirectory(self.Paths.Var("/portals/sockets/serial"))
-	err = self.CreateDirectory(self.Paths.Var("/portals/sockets/channel"))
-	err = self.CreateDirectory(self.Paths.Var("/portals/sockets/console"))
-	err = self.CreateDirectory(self.Paths.Var("/portals/sockets/parallel"))
+	self.CreateDirectory(self.Paths.VarPath)
+	self.CreateDirectory(self.Paths.Var("/portal-gun/os-image"))
+	self.CreateDirectory(self.Paths.Var("/portals/share"))
+	self.CreateDirectory(self.Paths.Var("/portals"))
+	self.CreateDirectory(self.Paths.Var("/portals/sockets"))
+	self.CreateDirectory(self.Paths.Var("/portals/sockets/serial"))
+	self.CreateDirectory(self.Paths.Var("/portals/sockets/channel"))
+	self.CreateDirectory(self.Paths.Var("/portals/sockets/console"))
+	self.CreateDirectory(self.Paths.Var("/portals/sockets/parallel"))
 
-	err = os.Remove(self.Home("/.local/share/libvirt/images")) 
+	os.Remove(self.Paths.Home("/.local/share/libvirt/images"))
 
-	err = CreateDir(self.Home("/.local/share/libvirt"), 0755, self.User.UID, self.User.GID)
+	CreateDir(self.Paths.Home("/.local/share/libvirt"), 0755, self.User.UID, self.User.GID)
 
-	err = os.Symlink(self.Var("/portals/disks/"), self.Home("/.local/share/libvirt/images"))
+	os.Symlink(self.Paths.Var("/portals/disks/"), self.Paths.Home("/.local/share/libvirt/images"))
 	return err
 }
 
@@ -35,7 +44,7 @@ func (self Paths) BaseFile(m machine.Type, path string) string {
 	return fmt.Sprintf("%s/%s", self.BaseFiles(m), path)
 }
 
-func (self Paths) BaseFiles(m MachineType) string {
+func (self Paths) BaseFiles(m machine.Type) string {
 	return fmt.Sprintf("%s/%s/base-files", self.GitPath, m.String())
 }
 

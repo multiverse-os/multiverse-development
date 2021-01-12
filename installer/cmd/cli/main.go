@@ -1,7 +1,8 @@
 package main
 
 import (
-	installer "../../../installer"
+	install "../.."
+	machine "../../machine"
 )
 
 func main() {

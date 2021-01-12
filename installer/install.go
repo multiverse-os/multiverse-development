@@ -58,7 +58,7 @@ func To(m machine.Type) (installer Installer) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self *Installer) Install() (err error) {
+func (self *Installer) Start() (err error) {
 	if !IsRoot() { panic(fmt.Errorf("must be root")) }
 
 
@@ -122,7 +122,7 @@ func (self *Installer) DoProcessorSpecificConfig() error {
 }
 
 func (self *Installer) DoInitramfsConfig() error {
-	err = Copy(self.BaseFile(machine.Host, "/etc/initramfs-tools/modules"), "/etc/initramfs-tools/modules")
+	Copy(self.Paths.BaseFile(machine.Host, "/etc/initramfs-tools/modules"), "/etc/initramfs-tools/modules")
 	terminal.Run("update-initramfs -u")
 	return nil
 }

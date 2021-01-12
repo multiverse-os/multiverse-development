@@ -1,7 +1,9 @@
 package install
 
 import (
-	"github.com/AlecAivazis/survey"
+	"fmt"
+
+	survey "github.com/AlecAivazis/survey"
 )
 
 
@@ -31,9 +33,7 @@ func AskRetry(s step) error {
 		} else if resp == "skip" {
 			return nil
 		} else if resp == "exit" {
-			log.Println(Fail(err.Error()))
-			os.Exit(1)
-			return err
+			panic(err)
 		}
 	}
 	return nil

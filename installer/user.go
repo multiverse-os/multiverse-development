@@ -1,5 +1,13 @@
 package install
 
+import (
+	"fmt"
+	"os"
+	"os/user"
+	"strconv"
+)
+
+
 type User struct {
 	Name string
 
@@ -13,7 +21,7 @@ type User struct {
 
 ///////////////////////////////////////////////////////////////////////////////
 func IsRoot() bool {
-	u, err = user.Current()
+	u, err := user.Current()
 	if err != nil {
 		return false
 	}
@@ -29,21 +37,21 @@ func (self *Installer) CreateGroup(name string) error {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self *Installer) SetUserAsOwner(path string) error { return os.Chown(path, self.User.uid, self.User.gid) }
+func (self *Installer) SetUserAsOwner(path string) error { return os.Chown(path, self.User.UID, self.User.GID) }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 func (self User) AddToGroup(group string) error {
-	return Terminal(fmt.Sprtinf("usermod -a -G %s %s", group, self.Name))
+	return Terminal(fmt.Sprintf("usermod -a -G %s %s", group, self.Name))
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self *Installer) SetupUser() (err error) {
+func (self *Installer) SetupUser() error {
 	// TODO: Need to create the user 'user', but it at this step we 
 	//       dont have a real installer,  so this will be created 
 	//       during the debian installation.
 
-	u, err = user.Lookup("user")
+	u, err := user.Lookup("user")
 	if err != nil {
 		return err
 	}
@@ -51,22 +59,22 @@ func (self *Installer) SetupUser() (err error) {
 	uid, _ := strconv.Atoi(u.Uid)
 	gid, _ := strconv.Atoi(u.Gid)
 
-	self.User = User{
+	self.User = &User{
 		Name: "user",
 		UID: uid,
 		GID: gid,
 	}
 
-	err = self.RemoveDirectory(self.Paths.Home("/Desktop"))
-	err = self.RemoveDirectory(self.Paths.Home("/Downloads"))
-	err = self.RemoveDirectory(self.Paths.Home("/Documents"))
-	err = self.RemoveDirectory(self.Paths.Home("/Music"))
-	err = self.RemoveDirectory(self.Paths.Home("/Videos"))
-	err = self.RemoveDirectory(self.Paths.Home("/Pictures"))
+	os.Remove(self.Paths.Home("/Desktop"))
+	os.Remove(self.Paths.Home("/Downloads"))
+	os.Remove(self.Paths.Home("/Documents"))
+	os.Remove(self.Paths.Home("/Music"))
+	os.Remove(self.Paths.Home("/Videos"))
+	os.Remove(self.Paths.Home("/Pictures"))
 
 
-	err = self.User.AddToGroup("kvm")
-	err = self.user.AddToGroup("libvirt")
+	self.User.AddToGroup("kvm")
+	self.User.AddToGroup("libvirt")
 
 	return nil
 }
