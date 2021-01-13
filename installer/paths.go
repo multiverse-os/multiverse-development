@@ -13,8 +13,8 @@ type Paths struct {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self *Context) CreateDirectory(path string) error { 
-	return CreateDir(path, 0700, self.User.Id, self.Group.Id)
+func (self *Context) CreateDirectory(path string) error {
+	return createDirectory(path, 0700, self.User.UID, self.Group.GID)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ func (self *Context) CreateMultiversePaths() (err error) {
 
 	os.Remove(self.Paths.Home("/.local/share/libvirt/images"))
 
-	self.CreateDirecotry(self.Paths.Home("/.local/share/libvirt"))
+	self.CreateDirectory(self.Paths.Home("/.local/share/libvirt"))
 
 	os.Symlink(self.Paths.Var("/portals/disks/"), self.Paths.Home("/.local/share/libvirt/images"))
 	return err
@@ -61,11 +61,11 @@ func (self Paths) Git(path string) string {
 }
 
 func (self Paths) Etc(path string) string {
-	return fmt.Sprintf("/etc/%s/", self.EtcPath, path)
+	return fmt.Sprintf("/etc/multiverse/%s", path)
 }
 
 func (self Paths) Var(path string) string {
-	return fmt.Sprintf("/var/%s/", self.VarPath, path)
+	return fmt.Sprintf("/var/multiverse/%s", path)
 }
 
 ///////////////////////////////////////////////////////////////////////////////

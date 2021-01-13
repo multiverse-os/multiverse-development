@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/user"
 	"strconv"
+
+	terminal "./terminal"
 )
 
 
@@ -38,7 +40,7 @@ func (self *Context) SetUserAsOwner(path string) error { return os.Chown(path, s
 
 ///////////////////////////////////////////////////////////////////////////////
 func (self User) AddToGroup(group string) error {
-	return Terminal(fmt.Sprintf("usermod -a -G %s %s", group, self.Name))
+	return terminal.Run(fmt.Sprintf("usermod -a -G %s %s", group, self.Name))
 }
 
 ///////////////////////////////////////////////////////////////////////////////
