@@ -4,17 +4,18 @@ import (
 	"os"
 	"fmt"
 	"path/filepath"
-	
+
 	machine "./machine"
+	terminal "./terminal"
 )
 
 
-func (self *Installer) CopyGeneralConfigFiles() (err error) {
-	Copy(self.Paths.BaseFile(machine.Host, self.Paths.Home(".gitconfig"), self.Paths.Home(".gitconfig")))
+func (self *Context) CopyGeneralConfigFiles() (err error) {
+	self.Paths.BaseFile(machine.Host, self.Paths.Home(".gitconfig"))
 
 	self.SetUserAsOwner(self.Paths.Home("/.gitconfig"))
 
-	CreateDirectory("/etc/multiverse")
+	createDirectory("/etc/multiverse", 0770, self.User.UID, self.Group.GID)
 
 	self.InstallFile("/etc/motd")
 	self.InstallFile("/etc/issue")
@@ -27,7 +28,7 @@ func (self *Installer) CopyGeneralConfigFiles() (err error) {
 	return nil
 }
 
-func (self *Installer) InstallFile(path string) error {
+func (self *Context) InstallFile(path string) error {
 	return Copy(self.Paths.BaseFile(machine.Host, path), path)
 }
 
@@ -39,7 +40,7 @@ func FileOrDirectoryExists(path string) bool {
 	return false
 }
 
-func (self *Installer) CloneGitRepository() error {
+func (self *Context) CloneGitRepository() error {
 	// TODO: Better than erroring if the directory is already there is checking 
 	//       the git error and cd + git pull instead.
 	if FileOrDirectoryExists(self.Paths.GitPath) {
@@ -48,10 +49,10 @@ func (self *Installer) CloneGitRepository() error {
 fmt.Printf("cd %s && git pull", self.Paths.GitPath)
 return nil
 	}else{
-		return Terminal(fmt.Sprintf("git clone https://github.com/multiverse-os/multiverse-development %s", self.Paths.GitPath))
+		return terminal.Run(fmt.Sprintf("git clone https://github.com/multiverse-os/multiverse-development %s", self.Paths.GitPath))
 	}
 }
 
-func (self *Installer) ParseConfigFiles() (files []string, err error) {
+func (self *Context) ParseConfigFiles() (files []string, err error) {
 	return filepath.Glob(self.Paths.BaseFiles(machine.Host))
 }

@@ -13,12 +13,12 @@ type Paths struct {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self *Installer) CreateDirectory(path string) error { 
+func (self *Context) CreateDirectory(path string) error { 
 	return CreateDir(path, 0700, self.User.Id, self.Group.Id)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self *Installer) CreateMultiversePaths() (err error) {
+func (self *Context) CreateMultiversePaths() (err error) {
 	self.CreateDirectory("/var/multiverse")
 	self.CreateDirectory("/etc/multiverse")
 

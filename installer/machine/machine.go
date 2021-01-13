@@ -43,23 +43,36 @@ type Machine struct {
 }
 
 // GetSysInfo gathers all available system information.
-func (self *Machine) Parse() *Machine {
+func Init() *Machine {
+	machine := &Machine{
+		Node: Node{},
+		OS: OperatingSystem{},
+		Kernel: Kernel{},
+		Product: Product{},
+		Board: Board{},
+		Chassis: Chassis{},
+		BIOS: BIOS{},
+		CPU: CPU{},
+		Memory: Memory{},
+		Network: []NetworkDevice{},
+		Storage: []StorageDevice{},
+	}
 	// DMI info
-	self.Product.Parse()
-	self.Board.Parse()
-	self.Chassis.Parse()
-	self.BIOS.Parse()
+	machine.Product.Parse()
+	machine.Board.Parse()
+	machine.Chassis.Parse()
+	machine.BIOS.Parse()
 	// SMBIOS info
-	self.ParseMemory()
+	machine.ParseMemory()
 	// Node info
-	self.Node.Parse() // depends on BIOS info
+	machine.Node.Parse() // depends on BIOS info
 	// Hardware info
-	self.ParseCPU() // depends on Node info
-	self.ParseStorage()
-	self.ParseNetwork()
+	machine.ParseCPU() // depends on Node info
+	machine.ParseStorage()
+	machine.ParseNetwork()
 	// Software info
-	self.OS.Parse()
-	self.Kernel.Parse()
-	return self
+	machine.OS.Parse()
+	machine.Kernel.Parse()
+	return machine
 }
 

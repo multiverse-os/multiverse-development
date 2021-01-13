@@ -30,14 +30,10 @@ func IsRoot() bool {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-func (self *Installer) CreateGroup(name string) error {
-	return Terminal(fmt.Sprintf("groupadd --system %s", name))
-}
 
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self *Installer) SetUserAsOwner(path string) error { return os.Chown(path, self.User.UID, self.User.GID) }
+func (self *Context) SetUserAsOwner(path string) error { return os.Chown(path, self.User.UID, self.User.GID) }
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -46,7 +42,7 @@ func (self User) AddToGroup(group string) error {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self *Installer) SetupUser() error {
+func (self *Context) SetupUser() error {
 	// TODO: Need to create the user 'user', but it at this step we 
 	//       dont have a real installer,  so this will be created 
 	//       during the debian installation.

@@ -1,6 +1,7 @@
 package install
 
 import (
+	machine "./machine"
 	packagemanager "./machine/packagemanager"
 )
 
@@ -8,7 +9,7 @@ import (
 type Context struct {
 	PackageManager packagemanager.PackageManager
 
-	Machine *Machine
+	Machine *machine.Machine
 
 	Step *InstallStep
 

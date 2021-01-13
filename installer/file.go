@@ -1,5 +1,9 @@
 package install
 
+import (
+	"os"
+	"io"
+)
 
 func Copy(src, dst string) error {
 	in, err := os.Open(src)

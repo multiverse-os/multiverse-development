@@ -1,10 +1,14 @@
 package install
 
-func (self *Installer) InstallAndUninstallPackagesFor(m machine.Type) error {
-pm := NewPackageManager(Apt)
-terminal.Output("Updating package lists...")
+import (
+	"fmt"
 
+	machine "./machine"
+	terminal "./terminal"
+)
 
+func (self *Context) InstallAndUninstallPackagesFor(m machine.Type) error {
+	terminal.Output("Updating package lists...")
 
 	AskRetry(pm.Update)
 	terminal.Output("Upgrading packages...")

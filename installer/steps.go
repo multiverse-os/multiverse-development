@@ -1,10 +1,8 @@
 package install
 
-type Context struct {
-	GitRepository string
-	
-
-
+import (
+	machine "./machine"
+)
 
 type Installation struct {
 	MacheType machine.Type
@@ -17,7 +15,7 @@ type Installation struct {
 type InstallStep struct {
 	Name string
 	Description string
-	Action func (c Context, error) error
+	Action func (c Context, err error) error
 
 	PreviousStep *InstallStep
 	NextStep *InstallStep

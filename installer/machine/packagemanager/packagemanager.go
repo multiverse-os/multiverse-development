@@ -1,15 +1,15 @@
 package packagemanager
 
 import (
-	"strings"
+	"fmt"
 
 	machine "../"
+	terminal "../../terminal"
 )
 
-
+///////////////////////////////////////////////////////////////////////////////
 // TODO: Need sources management. Ability to detect and manage the soruces file
 //       and probably track at least for debian BULLSEYE vs BUSTER vs ...
-
 ///////////////////////////////////////////////////////////////////////////////
 type Manager interface {
 	Install() (bool, error)
@@ -33,7 +33,6 @@ type Source struct {
 ///////////////////////////////////////////////////////////////////////////////
 type PackageManager struct {
 	OS machine.OperatingSystem
-	
 	Sources []Source
 }
 
@@ -59,7 +58,18 @@ func New(os machine.OperatingSystem) PackageManager {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self PackageManager) EnvironmentalVaraibles() string {
+func (self PackageManager) Name() string {
+	switch self.OS.Name {
+	case "alpine":
+		return "apk"
+	case "debian":
+		return "apt"
+	default:
+		return ""
+	}
+}
+
+func (self PackageManager) EnvVars() string {
 	switch self.OS.Name {
 	case "alpine":
 		return ""
@@ -81,120 +91,84 @@ func (self PackageManager) Flags() string {
 	}
 }
 
-func (self PackageManager) Name() string {
-	switch self.OS.Name {
-	case "alpine":
-		return "apk"
-	case "debian":
-		return "apt"
-	default:
-		return ""
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
-func (self PackageManager) Install() string {
-	switch self.OS.Name {
-	case "alpine":
-		return "add"
-	case "debian": // Apt
-		return "install"
-	default:
-		return ""
-	}
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-type Action int 
+type ActionType int
 
 const (
-	Install Action = iota
+	Install ActionType = iota
 	Remove
 	Update
 	Upgrade
-	Maintainance // Autoremove, cleanup, etc
+	DistributionUpgrade
+	AutoRemove
+	Clean // Autoremove, cleanup, etc
 )
 
+func (self ActionType) String(osName string) string {
+	switch osName {
+	case "alpine":
+		switch self {
+		case Install:
+			return "add"
+		case Remove:
+			return "rm"
+		case Update:
+			return "update"
+		case Upgrade:
+			return "upgrade"
+		case DistributionUpgrade:
+			return  ""
+		case AutoRemove:
+			return ""
+		case Clean:
+			return "clean"
+		default:
+			return ""
+		}
+	case "debian": // Apt
+		switch self {
+		case Install:
+			return "install"
+		case Remove:
+			return "remove"
+		case Update:
+			return "update"
+		case Upgrade:
+			return "upgrade"
+		case DistributionUpgrade:
+			return  "dist-upgrade"
+		case AutoRemove:
+			return "auto-remove"
+		case Clean:
+			return "clean"
+		default:
+			return ""
+		}
+	default:
+		return ""
+	}
+}
 
-func (self PackageManager) Action(action Action) error {
-
-	return terminal.Run(fmt.Sprintf("%s %s %s", self.EnvironmentalVariables(), self.Name, self.Action)
+func (self PackageManager) Action(action ActionType) string {
+	return fmt.Sprintf("%s %s %s", self.EnvVars(), self.Name, action.String(self.OS.Name), self.Flags())
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self PackageManager) InstallPackage(pkg string) error {
-}
+func (self PackageManager) InstallPackage(pkg string) error { return terminal.Run(self.Action(Install) + fmt.Sprintf(" %s", pkg)) }
 
-func (self PackageManager) InstallPackages(pkgs []string) error {
-	return terminal.Run(self.Install() + ` ` + strings.Join(pkgs, " "))
+func (self PackageManager) InstallPackages(pkgs []string) (err error) {
+	for _, pkg := range pkgs {
+		err = self.InstallPackage(pkg)
+	}
+	return err
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self PackageManager) Remove() string {
-	switch self.OS.Name {
-	case "alpine":
-		return "rm"
-	case "debian":
-		return "remove"
-	default:
-		return ""
+func (self PackageManager) RemovePackage(pkg string) error { return terminal.Run(self.Action(Remove) + fmt.Sprintf(" %s", pkg)) }
+
+func (self PackageManager) RemovePackages(pkgs []string) (err error) {
+	for _, pkg := range pkgs {
+		err = self.RemovePackage(pkg)
 	}
+	return err
 }
-
-func (self PackageManager) RemovePackage(pkg string) error {
-	return Terminal(self.Remove() + ` ` + pkg)
-}
-
-func (self PackageManager) RemovePackages(pkgs []string) error {
-	return Terminal(self.Remove() + ` ` + strings.Join(pkgs, " "))
-}
-
-func (self PackageManager) Maintainance() error {
-	switch self.OS.Name {
-	case "alpine":
-		return ""
-	case "debian":
-		return "autoremove"
-	default:
-		return ""
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////
-func (self PackageManager) Update() error {
-	switch self.OS.Name {
-	case "alpine":
-		return "update"
-	case "debian":
-		return "update"
-	default:
-		return ""
-	}
-}
-
-func (self PackageManager) Upgrade() error {
-	switch self.OS.Name {
-	case "alpine":
-		return "upgrade"
-	case "debian":
-		return "upgrade"
-	default:
-		return ""
-	}
-}
-
-func (self PackageManager) DistUpgrade() error {
-	switch self.OS.Name {
-	case "alpine":
-		return ""
-	case "debian":
-		return "dist-upgrade"
-	default:
-		return ""
-	}
-}
-
-
-
-

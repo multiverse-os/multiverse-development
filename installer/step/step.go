@@ -2,6 +2,7 @@ package step
 
 import (
 	"fmt"
+	"os"
 
 	survey "github.com/AlecAivazis/survey"
 )
@@ -35,7 +36,7 @@ func AskRetry(s step) error {
 			Default: "retry",
 		}
 		var response string
-		survey.AskOne(q, &resp)
+		survey.AskOne(q, &response)
 		switch response {
 		case "skip":
 			return nil

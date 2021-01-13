@@ -5,8 +5,7 @@ import (
 
 	machine "./machine"
 	terminal "./terminal"
-	cpu "./machine"
-
+	step "./step"
 )
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,16 +15,14 @@ type Packages struct {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func To(m machine.Type) (installer Installer) {
+func To(m machine.Type) (installer Context) {
 	switch m {
 	case machine.Controller:
 	case machine.Host:
 		installer = Context{
-			Machine: &Machine{
-				CPU: machine.CPU,
-			},
-			Packages: Packages{
-			Step: PrepareSystem,
+			Machine: machine.Init(),
+			Packages: Packages{},
+			//Step: PrepareSystem,
 			Paths: Paths{
 				HomePath: "/home/user",
 				GitPath: "/var/multiverse/development",
@@ -38,49 +35,49 @@ func To(m machine.Type) (installer Installer) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func (self *Installer) Start() (err error) {
+func (self *Context) Start() (err error) {
 	if !IsRoot() { panic(fmt.Errorf("must be root")) }
 
 
 	//// User
 	terminal.Output("Setting up user...")
-	AskRetry(self.SetupUser)
+	step.AskRetry(self.SetupUser)
 
 	//// Packages
 
 	terminal.Output("Removing unnecessary packages......")
 	// TODO best way to call this with AskRetry. Global with list of packages?
-	AskRetry(pm.Autoremove)
+	//step.AskRetry(pm.Autoremove)
 
 	terminal.Output("Creating default filepath....")
-	AskRetry(self.CreateMultiversePaths)
+	step.AskRetry(self.CreateMultiversePaths)
 
 	//// Configurations
 	//// Install Config files
 	terminal.Output("Downloading default config files....")
-	AskRetry(self.CloneGitRepository)
+	step.AskRetry(self.CloneGitRepository)
 
 	terminal.Output("Copying default config files....")
-	AskRetry(self.CopyGeneralConfigFiles)
+	step.AskRetry(self.CopyGeneralConfigFiles)
 
 	//// Enable IOMMU in grub
 	terminal.Output("Copying processor specific config files and enabling IOMMU in grub....")
-	AskRetry(self.DoProcessorSpecificConfig)
+	step.AskRetry(self.DoProcessorSpecificConfig)
 
 	terminal.Output("Adding modules to initramfs....")
-	AskRetry(self.DoInitramfsConfig)
+	step.AskRetry(self.DoInitramfsConfig)
 
 	return err
 }
 
 
-func (self *Installer) DoProcessorSpecificConfig() error {
-	var sInfo sysinfo.SysInfo
-	sInfo.GetSysInfo()
-	if sInfo.CPU.Vendor == "AuthenticAMD" {
+func (self *Context) DoProcessorSpecificConfig() error {
+	switch self.Machine.CPU.Vendor { 
+	case "AuthenticAMD":
+		// TODO: These don't work
 		Copy(self.Paths.BaseFile(machine.Host, "/etc/default/grub-amd"), "/etc/default/grub")
 		Copy(self.Paths.BaseFile(machine.Host, "/etc/modules-amd"), "/etc/modules")
-	} else if sInfo.CPU.Vendor == "GenuineIntel" {
+	case "GenuineIntel":
 		Copy(self.Paths.BaseFile(machine.Host, "/etc/default/grub-intel"), "/etc/default/grub")
 		Copy(self.Paths.BaseFile(machine.Host, "/etc/modules-intel"), "/etc/modules")
 	}
@@ -88,7 +85,7 @@ func (self *Installer) DoProcessorSpecificConfig() error {
 	return nil
 }
 
-func (self *Installer) DoInitramfsConfig() error {
+func (self *Context) DoInitramfsConfig() error {
 	Copy(self.Paths.BaseFile(machine.Host, "/etc/initramfs-tools/modules"), "/etc/initramfs-tools/modules")
 	terminal.Run("update-initramfs -u")
 	return nil

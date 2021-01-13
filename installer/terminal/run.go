@@ -4,11 +4,9 @@ import (
 	"os/exec"
 )
 
-func Run(command string) {	
+func Run(command string) error {	
 	cmd := exec.Command("/bin/bash", "-c", command)
 	_, err := cmd.Output()
-	if err != nil {
-		println(err.Error())
-	}
+	return err
 }
 
