@@ -10,19 +10,19 @@ import (
 
 
 func (self *Installer) CopyGeneralConfigFiles() (err error) {
-	err = Copy(self.Paths.BaseFile(machine.Host, "/home/user/.gitconfig"), self.Paths.Home("/.gitconfig"))
+	Copy(self.Paths.BaseFile(machine.Host, self.Paths.Home(".gitconfig"), self.Paths.Home(".gitconfig"))
 
-	err = self.SetUserAsOwner(self.Paths.Home("/.gitconfig"))
+	self.SetUserAsOwner(self.Paths.Home("/.gitconfig"))
 
-	err = self.CreateDirectory("/etc/multiverse")
+	CreateDirectory("/etc/multiverse")
 
-	err = self.InstallFile("/etc/motd")
-	err = self.InstallFile("/etc/issue")
-	err = self.InstallFile("/etc/security/limits.conf")
-	err = self.InstallFile("/etc/sysctl.conf")
-	err = self.InstallFile("/etc/sysctl.d/30-tracker.conf")
-	err = self.InstallFile("/etc/sysctl.d/99-sysctl.conf")
-	err = self.InstallFile("/etc/rc.local")
+	self.InstallFile("/etc/motd")
+	self.InstallFile("/etc/issue")
+	self.InstallFile("/etc/security/limits.conf")
+	self.InstallFile("/etc/sysctl.conf")
+	self.InstallFile("/etc/sysctl.d/30-tracker.conf")
+	self.InstallFile("/etc/sysctl.d/99-sysctl.conf")
+	self.InstallFile("/etc/rc.local")
 
 	return nil
 }

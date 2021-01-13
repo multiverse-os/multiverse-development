@@ -10,18 +10,21 @@ import (
 type Paths struct {
 	HomePath string
 	GitPath string
-	EtcPath string
-	VarPath string
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 func (self *Installer) CreateDirectory(path string) error { 
-	return CreateDir(path, 0700, self.User.UID, self.User.GID)
+	return CreateDir(path, 0700, self.User.Id, self.Group.Id)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 func (self *Installer) CreateMultiversePaths() (err error) {
-	self.CreateDirectory(self.Paths.VarPath)
+	self.CreateDirectory("/var/multiverse")
+	self.CreateDirectory("/etc/multiverse")
+
+
+
+
 	self.CreateDirectory(self.Paths.Var("/portal-gun/os-image"))
 	self.CreateDirectory(self.Paths.Var("/portals/share"))
 	self.CreateDirectory(self.Paths.Var("/portals"))
@@ -33,7 +36,7 @@ func (self *Installer) CreateMultiversePaths() (err error) {
 
 	os.Remove(self.Paths.Home("/.local/share/libvirt/images"))
 
-	CreateDir(self.Paths.Home("/.local/share/libvirt"), 0755, self.User.UID, self.User.GID)
+	self.CreateDirecotry(self.Paths.Home("/.local/share/libvirt"))
 
 	os.Symlink(self.Paths.Var("/portals/disks/"), self.Paths.Home("/.local/share/libvirt/images"))
 	return err
@@ -50,19 +53,29 @@ func (self Paths) BaseFiles(m machine.Type) string {
 
 ///////////////////////////////////////////////////////////////////////////////
 func (self Paths) Home(path string) string {
-	return fmt.Sprintf("%s/%s", self.HomePath, path)
+	return fmt.Sprintf("%s/%s/", self.HomePath, path)
 }
 
 func (self Paths) Git(path string) string {
-	return fmt.Sprintf("%s/%s", self.GitPath, path)
+	return fmt.Sprintf("%s/%s/", self.GitPath, path)
 }
 
 func (self Paths) Etc(path string) string {
-	return fmt.Sprintf("%s/%s", self.EtcPath, path)
+	return fmt.Sprintf("/etc/%s/", self.EtcPath, path)
 }
 
 func (self Paths) Var(path string) string {
-	return fmt.Sprintf("%s/%s", self.VarPath, path)
+	return fmt.Sprintf("/var/%s/", self.VarPath, path)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+func createDirectory(name string, perm os.FileMode, uid int, gid int) error {
+	if err := os.MkdirAll(name, perm); err != nil {
+		return err
+	}
+
+	if err := os.Chown(name, uid, gid); err != nil {
+		return err
+	}
+	return nil
+}

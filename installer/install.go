@@ -17,19 +17,7 @@ type Packages struct {
 	Remove []string
 }
 
-type System struct {
-	CPU cpu.Architecture
-}
 
-// TODO: The idea is overtime this can be used to work to function as an 
-//       installer for various 
-type Installer struct {
-	Step InstallStep
-	User *User
-	Paths Paths
-	Packages Packages
-	System System
-}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -39,16 +27,14 @@ func To(m machine.Type) (installer Installer) {
 	case machine.Host:
 		installer = Installer{
 			Packages: Packages{
-				Install: []string{ "ovmf", "virt-manager", "pass", "git", "golang", "ruby", "dirmngr", "vim", "neovim"},
+				Install: []string{ "ovmf", "virt-manager", "pass", "git", "golang", "ruby", "neovim"},
 
-				Remove: []string{"nano", "minissdpd"},
+				Remove: []string{"nano"},
 			},
 			Step: PrepareSystem,
 			Paths: Paths{
 				HomePath: "/home/user",
 				GitPath: "/var/multiverse/development",
-				EtcPath: "/etc/multiverse",
-				VarPath: "/var/multiverse",
 			},
 		}
 	default:
@@ -67,19 +53,6 @@ func (self *Installer) Start() (err error) {
 	AskRetry(self.SetupUser)
 
 	//// Packages
-	pm := NewPackageManager(Apt)
-	terminal.Output("Updating package lists...")
-	AskRetry(pm.Update)
-	terminal.Output("Upgrading packages...")
-	AskRetry(pm.Upgrade)
-	terminal.Output("Installing packages...")
-
-	if err = pm.RemovePackages(self.Packages.Remove); err != nil {
-		panic(fmt.Errorf("can't remove packages: %v\n", err))
-	}
-	if err := pm.InstallPackages(self.Packages.Install); err != nil {
-		panic(fmt.Errorf("can't install packages: %v\n", err))
-	}
 
 	terminal.Output("Removing unnecessary packages......")
 	// TODO best way to call this with AskRetry. Global with list of packages?

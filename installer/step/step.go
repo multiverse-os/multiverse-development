@@ -1,9 +1,17 @@
-package install
+package step
 
 import (
 	"fmt"
 
 	survey "github.com/AlecAivazis/survey"
+)
+
+type AskOption int
+
+const (
+	RetryOption AskOption = iota
+	SkipOption
+	ExitOption
 )
 
 
@@ -26,14 +34,16 @@ func AskRetry(s step) error {
 			Options: []string{"retry", "skip", "exit"},
 			Default: "retry",
 		}
-		var resp string
+		var response string
 		survey.AskOne(q, &resp)
-		if resp == "retry" {
-			return AskRetry(s)
-		} else if resp == "skip" {
+		switch response {
+		case "skip":
 			return nil
-		} else if resp == "exit" {
-			panic(err)
+		case "exit":
+			fmt.Println("[ERROR] Unable to proceed:", err)
+			os.Exit(1)
+		default: // retry
+			return AskRetry(s)
 		}
 	}
 	return nil

@@ -73,8 +73,12 @@ func (self *Installer) SetupUser() error {
 	os.Remove(self.Paths.Home("/Pictures"))
 
 
+	self.CreateGroup("libvirt")
+	self.CreateGroup("multiverse")
+
 	self.User.AddToGroup("kvm")
 	self.User.AddToGroup("libvirt")
+	self.User.AddToGroup("multiverse")
 
 	return nil
 }

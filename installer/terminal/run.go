@@ -11,3 +11,4 @@ func Run(command string) {
 		println(err.Error())
 	}
 }
+
