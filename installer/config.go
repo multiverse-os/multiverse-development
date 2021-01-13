@@ -10,7 +10,7 @@ import (
 
 
 func (self *Installer) CopyGeneralConfigFiles() (err error) {
-	Copy(self.Paths.BaseFile(machine.Host, self.Paths.Home(".gitconfig"), self.Paths.Home(".gitconfig"))
+	Copy(self.Paths.BaseFile(machine.Host, self.Paths.Home(".gitconfig"), self.Paths.Home(".gitconfig")))
 
 	self.SetUserAsOwner(self.Paths.Home("/.gitconfig"))
 

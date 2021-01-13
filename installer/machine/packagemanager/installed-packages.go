@@ -1,4 +1,4 @@
-package install
+package packagemanager
 
 func InstalledPackages() []string {
 	return []string{"adduser",

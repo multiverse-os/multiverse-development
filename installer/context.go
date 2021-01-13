@@ -1,12 +1,24 @@
 package install
 
+import (
+	packagemanager "./machine/packagemanager"
+)
+
+
 type Context struct {
 	PackageManager packagemanager.PackageManager
 
-	Step InstallStep
-	ser *User
+	Machine *Machine
+
+	Step *InstallStep
+
+	User *User
+	Group *Group
+
 	Paths Paths
+
 	Packages Packages
-	System System
-	Paths []string
+
+
+	RequiredNewPaths []string
 }

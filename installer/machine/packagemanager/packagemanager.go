@@ -1,14 +1,9 @@
 package packagemanager
 
 import (
-	"bytes"
-	"fmt"
-	"io"
-	"os"
-	"os/exec"
 	"strings"
-	"unicode"
-	"unicode/utf8"
+
+	machine "../"
 )
 
 
@@ -29,23 +24,22 @@ type Manager interface {
 	Installed() bool
 }
 
-func Source struct {
+type Source struct {
 	Type string
 	Address string
 	Options []string
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 type PackageManager struct {
-	OS OperatingSystem
+	OS machine.OperatingSystem
 	
 	Sources []Source
 }
 
 func (self PackageManager) SourcesFile() string {
 	return `
-deb http://deb.debian.org/debian/ `+self.OS.Version.Name+` main
+deb http://deb.debian.org/debian/ `+self.OS.Version+` main
 deb-src http://deb.debian.org/debian/ bullseye main
 
 deb http://security.debian.org/debian-security buster/updates main
@@ -58,82 +52,93 @@ deb-src http://deb.debian.org/debian/ bullseye-updates main
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-func New(os OperatingSystem) PackageManager {
+func New(os machine.OperatingSystem) PackageManager {
 	return PackageManager{
-		OperatingSystem: os,
+		OS: os,
 	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-type OperatingSystem struct {
-	Name OSName
-	Version OSVersion
-
-}
-
-type OSName int
-
-const (
-	Debian OSName = iota
-	Alpine
-)
-
-type OSVersion struct {
-	Name string
-	Number string
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
 func (self PackageManager) EnvironmentalVaraibles() string {
-	return "DEBIAN_FRONTEND=noninteractive"
-}
-
-func (self PackageManager) Flags() string {
-	switch self.OS {
-	case Debian:
-		return " -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew -o APT::Install-Recommends=0 -y"
-	case Apt:
+	switch self.OS.Name {
+	case "alpine":
 		return ""
+	case "debian":
+		return "DEBIAN_FRONTEND=noninteractive"
 	default:
 		return ""
 	}
 }
 
-func (self PaackageManager) Name() string {
-	switch self {
-	case Debian:
+func (self PackageManager) Flags() string {
+	switch self.OS.Name {
+	case "alpine":
+		return ""
+	case "debian":
+		return " -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew -o APT::Install-Recommends=0 -y"
+	default:
+		return ""
+	}
+}
+
+func (self PackageManager) Name() string {
+	switch self.OS.Name {
+	case "alpine":
+		return "apk"
+	case "debian":
 		return "apt"
-	case Alpine:
-		return "apt"
+	default:
+		return ""
 	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 func (self PackageManager) Install() string {
-	switch self.Type {
-	case Apk:
-		return "apk add"
-	default: // Apt
-		return "DEBIAN_FRONTEND=noninteractive apt install -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew -o APT::Install-Recommends=0 -y"
+	switch self.OS.Name {
+	case "alpine":
+		return "add"
+	case "debian": // Apt
+		return "install"
+	default:
+		return ""
 	}
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+type Action int 
+
+const (
+	Install Action = iota
+	Remove
+	Update
+	Upgrade
+	Maintainance // Autoremove, cleanup, etc
+)
+
+
+func (self PackageManager) Action(action Action) error {
+
+	return terminal.Run(fmt.Sprintf("%s %s %s", self.EnvironmentalVariables(), self.Name, self.Action)
+}
+
+///////////////////////////////////////////////////////////////////////////////
 func (self PackageManager) InstallPackage(pkg string) error {
-	return Terminal(self.Install() + ` ` + pkg)
 }
 
 func (self PackageManager) InstallPackages(pkgs []string) error {
-	return Terminal(self.Install() + ` ` + strings.Join(pkgs, " "))
+	return terminal.Run(self.Install() + ` ` + strings.Join(pkgs, " "))
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 func (self PackageManager) Remove() string {
-	switch self.Type {
-	case Apk:
-		return "apk rm"
-	default: // Apt
-		return "DEBIAN_FRONTEND=noninteractive apt remove -y"
+	switch self.OS.Name {
+	case "alpine":
+		return "rm"
+	case "debian":
+		return "remove"
+	default:
+		return ""
 	}
 }
 
@@ -145,36 +150,48 @@ func (self PackageManager) RemovePackages(pkgs []string) error {
 	return Terminal(self.Remove() + ` ` + strings.Join(pkgs, " "))
 }
 
-func (self PackageManager) Autoremove() error {
-	switch self.Type {
-	default: // Apt
-		return terminal.Run("DEBIAN_FRONTEND=noninteractive apt autoremove -y")
+func (self PackageManager) Maintainance() error {
+	switch self.OS.Name {
+	case "alpine":
+		return ""
+	case "debian":
+		return "autoremove"
+	default:
+		return ""
 	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 func (self PackageManager) Update() error {
-	switch self.Type {
-	case Apk:
-		return Terminal("apk update")
-	default: // Apt
-		return Terminal("DEBIAN_FRONTEND=noninteractive apt update -y")
+	switch self.OS.Name {
+	case "alpine":
+		return "update"
+	case "debian":
+		return "update"
+	default:
+		return ""
 	}
 }
 
 func (self PackageManager) Upgrade() error {
-	switch self.Type {
-	case Apk:
-		return Terminal("apk upgrade")
-	default: // Apt
-		return Terminal("DEBIAN_FRONTEND=noninteractive apt upgrade -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew -y")
+	switch self.OS.Name {
+	case "alpine":
+		return "upgrade"
+	case "debian":
+		return "upgrade"
+	default:
+		return ""
 	}
 }
 
 func (self PackageManager) DistUpgrade() error {
-	switch self.Type {
-	default: // Apt
-		return Terminal("DEBIAN_FRONTEND=noninteractive apt dist-upgrade -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew -y")
+	switch self.OS.Name {
+	case "alpine":
+		return ""
+	case "debian":
+		return "dist-upgrade"
+	default:
+		return ""
 	}
 }
 

@@ -5,11 +5,9 @@ import (
 
 	machine "./machine"
 	terminal "./terminal"
-	cpu "./machine/hardware/cpu"
+	cpu "./machine"
 
-	"github.com/zcalusic/sysinfo"
 )
-
 
 ///////////////////////////////////////////////////////////////////////////////
 type Packages struct {
@@ -17,20 +15,16 @@ type Packages struct {
 	Remove []string
 }
 
-
-
-
 ///////////////////////////////////////////////////////////////////////////////
 func To(m machine.Type) (installer Installer) {
 	switch m {
 	case machine.Controller:
 	case machine.Host:
-		installer = Installer{
-			Packages: Packages{
-				Install: []string{ "ovmf", "virt-manager", "pass", "git", "golang", "ruby", "neovim"},
-
-				Remove: []string{"nano"},
+		installer = Context{
+			Machine: &Machine{
+				CPU: machine.CPU,
 			},
+			Packages: Packages{
 			Step: PrepareSystem,
 			Paths: Paths{
 				HomePath: "/home/user",
