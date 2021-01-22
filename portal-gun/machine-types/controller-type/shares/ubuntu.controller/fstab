@@ -1,0 +1,23 @@
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/vda2 during installation
+UUID=502f7f9a-8ada-4984-8ac3-ab8ab2bf9ef3 /               ext4    errors=remount-ro 0       1
+# /boot/efi was on /dev/vda1 during installation
+UUID=2AA9-CB65  /boot/efi       vfat    umask=0077      0       1
+/swapfile                                 none            swap    sw              0       0
+
+##=============================================================================
+## Multiverse P9 Passthrough
+##=============================================================================
+multiverse-portal /media/user/MultiversePortal 9p trans=virtio,9p2000.L,rw,posixacl,cache=none,nofail 0 0 
+multiverse        /media/user/Multiverse       9p trans=virtio,9p2000.L,rw,posixacl,cache=none,nofail 0 0
+## Physical Storage Passthrough 
+##=============================================================================
+UUID=50b65b19-124c-4000-888c-289c05b7fa13 /media/user/Zone auto nosuid,nodev,nofail,x-gvfs-show 0 0
+UUID=ca4d01fa-214a-460d-83e3-40bde9ec3ab4 /media/user/Mirror auto nosuid,nodev,nofail,x-gvfs-show 0 0
+UUID=16a933bc-d0e0-4393-8768-6826f5f0109c /media/user/Vault auto nosuid,nodev,nofail,x-gvfs-show 0 0

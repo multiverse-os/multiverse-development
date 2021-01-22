@@ -1,0 +1,25 @@
+##
+##  Multiverse OS: Universe Router VM
+##=====================================
+KEYMAPOPTS="us us"
+HOSTNAMEOPTS="-n host"
+INTERFACESOPTS="auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+	address 10.0.0.1
+	netmask 255.255.255.0
+	gateway 10.0.0.1
+
+auto eth1
+iface eth0 inet dhcp
+"
+
+DNSOPTS="-d 8.8.8.8"
+TIMEZONEOPTS="-z UTC"
+PROXYOPTS="none"
+APKREPOSOPTS="-f"
+SSHDOPTS="none"
+NTPOPTS="-c chrony"
+DISKOPTS="-m sys /dev/vda"

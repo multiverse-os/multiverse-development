@@ -1,0 +1,30 @@
+##                                                                           ##
+## Multiverse OS: Universal Bootloader Configuration                         ##
+###############################################################################
+# hcl=1 slew_tick=1 
+# kvm-intel.emulate_invalid_guest_state=1 intel_pstate=passive intel_idle.max_cstate=2
+# spec_store_bypass spectre_v2_user spectre_v2 tsx_async_abort=full,nosmt
+###############################################################################
+#if [ -z $(lscpu | grep "Intel" ]; then
+	INTEL_CPU="intel_iommu=on kvm-intel.nested=1"
+#elif [-z $(lscpu | grep "AMD" ]; then
+	#AMD_CPU="amd_iommu=on iommu=pt"
+#fi
+###############################################################################
+CPU="$INTEL_CPU isocpus=2-9,12-19" #idle=nomwait pci=realloc 
+GPU="nomodeset" 
+MEM=""   # page_alloc.shuffle=1 iomem=relaxed transparent_hugepage=always
+CLOCK="" # clocksource=hpet,tsc hpet_mmap=1 hcl=1 hpet=force 
+NET="r8169e_pci.blacklist=1 r8169u_usb.blacklist=1 r8712u.blacklist=1 rtl8xxxu.blacklist=1 r8169.blacklist=1 e1000e.blacklist=1 alx.blacklist=1 rxrcp.blacklist=1"
+BUGFIX=""
+###############################################################################
+GRUB_DEFAULT=0
+GRUB_TIMEOUT=15
+GRUB_DISTRIBUTOR="Mutliverse OS: 'host.universe0' (Physical)"  
+GRUB_CMDLINE_LINUX_DEFAULT="quiet $CPU $GPU $MEM $CLOCK $NET $BUGFIX"
+GRUB_GFXMODE=auto
+GRUB_DISABLE_RECOVERY=false
+GRUB_DISABLE_LINUX_UUID=false
+###############################################################################
+# Uncomment to disable graphical terminal (grub-pc only)                      #
+###############################################################################

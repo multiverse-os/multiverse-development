@@ -1,0 +1,277 @@
+#!/bin/sh
+###############################################################################
+## TODO:
+## This script is where all previous installation scripts and demonstration of 
+## the guides are consolidated. Major changes are actualized here before
+## the conversion into Go and addition of UI for installation from both live
+## media or installation specific media.
+##
+## The major changes will include: ############################################
+##   * Abandon all references to libvirt, as it has been decided that the 
+##     alpha installer will have completely abandoned the libvirt system
+##     in favor of a Multiverse QEMU/NEMU+KVM hypervisor with a light weight
+##     Multiverse OS focused and oriented Virtual Machine provisioning via
+##     virtual keyboard, configuration of QEMU command-line arguments via
+##     either YAML (and if time eventually Ruby based configuration).
+##
+##     * These changes are actualized by converting 'libvirt' group references
+##       to 'kvm' group. 
+##
+##     * Network bridges are abandoned in favor of direct VM-to-VM VSOCK
+##       connections, or if not complete, at least a migration to simple 
+##       bridge creation or preferably userspace Go based software bridges.
+##
+##     * Storage pools are abandoned entirely in favor of apparmor like 
+##       allowlist (or whitelist) based access over specific files or folders
+##       from individual VMs.
+##
+##  * Start building out basic functionality of PortalGun to manage virtual 
+##    machine provisioning from vanilla installation media of major Linux
+##    distribution. Instead of relying on prebuilt images like Docker, and
+##    requiring overly complex and convuluted image creation software that
+##    is separate. PortalGun is built around its ability to provision from
+##    the lowest levels, build a secure BIOS using the users crypto keypair
+##    build and tracking bootloader, initramfs and eventually custom kernel.
+##    These are then compiled into a live media or image that is used in
+##    read-only mode as the basis to the ephemeral Multiverse OS virtual 
+##    machines. 
+##     
+##
+##
+##
+##
+
+
+# Multiverse OS Script Color Palette
+#==============================================================================
+header="\e[0;95m"
+accent="\e[37m"
+subheader="\e[98m"
+strong="\e[96m"
+text="\e[94m"
+success="\e[92m"
+warning="\e[93m"
+fail="\e[91m"
+reset="\e[0m"
+#==============================================================================
+# Settings
+USER_HOME="/home/user/"
+GIT_SRC_PATH="/home/user/multiverse/"
+MV_CONFIG_PATH="/etc/multiverse/"
+#==============================================================================
+
+echo -e $header"Multiverse OS Host Machine Setup"$reset
+echo -e $accent"================================"$reset
+echo -e $text"# Installing and updating software packages"$reset
+
+echo -e $strong"Updating and installing $accent apt$reset packages"$reset
+echo -e $text"Updating $accent apt$reset repositories..."$reset
+# TODO: Can hide output if it becomes too much spam to read the helptext using:
+# apt-get update 2>/dev/null    # Hides just stderr
+# apt-get update &>/dev/null    # Hides both stdout and stderr
+apt-get update
+echo -e $text"Updating $accent apt$reset packages.."$reset
+apt-get upgrade 
+
+echo -e $text"Installing base Multiverse OS Host Machine packages: [ovmf, qemu, git, vim, sudo, virt-manager, pass, dirmngr, ssh]"$reset
+apt-get install -y ovmf qemu git vim sudo virt-manager pass dirmngr ssh
+
+echo -e $text"Removing unncessary folders from Multiverse user 'user': [Documents, Downloads, Music, Pictures, Public, Templates, Videos]"$reset
+rm -rf $USER_HOME/Documents/
+rm -rf $USER_HOME/Downloads/
+rm -rf $USER_HOME/Music/
+rm -rf $USER_HOME/Pictures/
+rm -rf $USER_HOME/Public/
+rm -rf $USER_HOME/Templates/
+rm -rf $USER_HOME/Videos/
+
+
+echo -e $text"Creating Multiverse OS folders: ['$MV_CONFIG_PATH/images/', '$MV_CONFIG_PATH/machines/', '$HOME_USER/.local/share/multiverse/os-images', '$HOME_USER/.config/multiverse', '/etc/multiverse', '/usr/lib/multiverse']"$reset
+mkdir -p $MV_CONFIG_PATH/images/
+chown -R user:user $MV_CONFIG_PATH/images/
+chmod 711 $MV_CONFIG_PATH/images/
+
+mkdir -p $MV_CONFIG_PATH/machines/
+chown -R user:user $MV_CONFIG_PATH/machines/
+chmod 711 $MV_CONFIG_PATH/machines/
+
+mkdir -p $HOME_USER/.local/share/multiverse/
+chown -R user:user $HOME_USER/.local/share/multiverse/
+chmod 711 $HOME_USER/.local/share/multiverse/
+
+mkdir -p $HOME_USER/.config/multiverse/
+chown -R user:user $HOME_USER/.config/multiverse/
+chmod 711 $HOME_USER/.config/multiverse/
+
+mkdir -p /etc/multiverse/
+chown -R user:user /etc/multiverse/
+chmod 711 /etc/multiverse/
+
+mkdir -p /usr/lib/multiverse/
+chown -R user:user /usr/lib/multiverse/
+chmod 711 /usr/lib/multiverse/
+
+
+echo -e $strong"Cloning $accent Multiverse OS$reset development git repository:$accent https://github.com/hackwave/multiverse-development$accent to $HOME_USER..."$reset
+
+cd $USER_HOME && git clone https://github.com/hackwave/multiverse-development multiverse
+
+echo -e $strong"Downloading Linux distributions$accent os-images$reset needed for Multiverse OS installation..."$reset
+
+cd $GIT_SRC_PATH/images/os-images && ./alpine-dl-and-verify.sh
+cd $GIT_SRC_PATH/images/os-images && ./debian-dl-and-verify.sh
+cd $GIT_SRC_PATH/images/os-images && ./whonix-dl-and-verify.sh
+
+
+echo -e $strong"Fixing permissions on git repository, setting it to  $accent user:user$reset ..."$reset
+chown -R user:user $GIT_SRC_PATH
+
+echo -e $strong"Setting generic git user and name to increase ones psuedoanonymity (do not change this, define this in your development application VMs)..."$reset
+
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+
+###############################################################################
+## NOTE:
+##   As Multiverse OS moves away from 'libvirt' we will want to create a
+##   multiverse group and apply this to the user. And use this instead of
+##   libvirt to apply permissions.
+##
+
+echo -e $strong"Add groups to generic Multiverse OS user 'user': [kvm, libvirt]..."$reset
+
+usermod -a -G kvm user
+usermod -a -G libvirt user
+
+echo -e $strong"Copy limits.conf file from$accent host.multiverse$reset machines folder to '/etc/security'..."$reset
+cp $GIT_SRC_PATH/machines/host.multiverse/config/etc/security/limits.conf /etc/security
+
+echo -e $strong"Deleting default virtaul network 'default'..."$reset
+virsh net-undefine default
+
+echo -e $strong"Using$accent host.multiverse$reset virtual network xml to define virtual networks: [virbr0, virbr1, virbr2]"$reset
+
+# TODO: This is old style
+#virsh net-define $GIT_SRC_PATH/machines/host.multiverse/xml/networks/virbr0.xml
+#virsh net-define $GIT_SRC_PATH/machines/host.multiverse/xml/networks/virbr1.xml
+#virsh net-define $GIT_SRC_PATH/machines/host.multiverse/xml/networks/virbr2.xml
+
+echo -e $strong"Configuring each virbrX to start at boot..."$reset
+
+# TODO: This is the old style
+#virsh net-autostart virbr0
+#virsh net-autostart virbr1
+#virsh net-autostart virbr2
+
+echo -e $strong"Creating '/etc/qemu' folder..."$reset
+mkdir -p /etc/qemu
+
+###############################################################################
+## NOTE
+##   Move away from using echo's into files and instead use templates, as it
+##   is better capble of supporting re-install without issues and makes it
+##   easier to update from templates making everything more consistent and
+##   less inline shell script changing.
+##
+
+echo -e $strong"Creating '/etc/qemu/bridge.conf' file to allow unpriviledged access to virbrX..."$reset
+echo -e "allow virbr0"  > /etc/qemu/bridge.conf
+echo -e "allow virbr1" >> /etc/qemu/bridge.conf
+echo -e "allow virbr2" >> /etc/qemu/bridge.conf
+
+echo -e $strong"Creating '/etc/qemu/bridge.conf' file to allow unpriviledged access to virbrX..."$reset
+chown -R root:libvirt /usr/lib/qemu/
+chmod 4750 /usr/lib/qemu/qemu-bridge-helper
+
+###############################################################################
+## TODO: Seems to be repeating from the top, ensure it is not, if it isn't add
+##       back in whatever code that is relevant and should remain and remove
+##       the remainder to start converting each section of this into Go
+##       functions
+##
+################################################################################
+## Add three storage pools to user session
+##==============================================================================
+#MV_USER="user"
+#MV_GROUP="libvirt"
+#MV_CONFIG_PATH="/var/multiverse/"
+#USER_HOME="/home/user"
+#MV_PATH="$USER_HOME/multiverse/"
+#GIT_SRC_DIR="$USER_HOME/multiverse"
+#CURRENT_USER=$(whoami)
+##==============================================================================
+#
+#
+#if [ $CURRENT_USER = "user" ]; then
+#  echo $fail"[Error] Must be logged in as root. Run 'su' and try again."$reset
+#  exit 0
+#fi
+#if grep -q Intel /proc/cpuinfo; then
+#  CPU_TYPE="Intel"
+#elif grep -q AMD /proc/cpuinfo; then
+#  CPU_TYPE="AMD"
+#else
+#  echo $fail"[Error] Failed to detect CPU manufacturer."$reset
+#  exit 0
+#fi
+## do I need -H here?
+##sudo -u user -H virsh pool-define $GIT_SRC_DIR/machines/host.multiverse/xml/storage
+#echo $strong"Defining$accent host.multiverse$reset from xml in machines folder..."$reset
+#sudo -u user virsh pool-define $GIT_SRC_DIR/machines/host.multiverse/xml/storage/images.xml
+#sudo -u user virsh pool-define $GIT_SRC_DIR/machines/host.multiverse/xml/storage/os-images.xml
+#sudo -u user virsh pool-define $GIT_SRC_DIR/machines/host.multiverse/xml/storage/machines.xml
+#
+#echo $strong"Configuring storage pools to start on boot..."$reset
+#sudo -u user virsh pool-autostart images
+#sudo -u user virsh pool-autostart os-images
+#sudo -u user virsh pool-autostart machines
+#
+## NOTE Move to using Go and templates
+#echo $strong"Enabling IOMMU in grub..."$reset
+#if [ $CPU_TYPE = "Intel" ]; then
+#  cp $GIT_SRC_DIR/machines/host.multiverse/config/etc/default/grub-intel /etc/default/grub
+#elif [ $CPU_TYPE = "AMD" ]; then
+#  cp $GIT_SRC_DIR/machines/host.multiverse/config/etc/default/grub-amd /etc/default/grub
+#else
+#  echo $fail"[Error] Failed to detect CPU manufacturer."$reset
+#  exit 0
+#fi
+#echo $strong"Updating Grub..."$reset
+#update-grub
+#
+### NOTE
+###   Change this to using template instead of echoing, to simplify updating,
+###   managmenet, and conversion to higher level language
+##echo -e "vfio-pci\nvfio" >> /etc/modules
+#echo $strong"Adding modules to initramfs: [vfio_pci, vfio, vfio_iommu_type]"$reset
+#echo "vfio_pci"         >  /etc/initramfs-tools/modules
+#echo "vfio"             >> /etc/initramfs-tools/modules
+#echo "vfio_iommu_type1" >> /etc/initramfs-tools/modules
+#
+#9pnet
+#9pnet_virtio
+#
+#echo $strong"Rebuilding initramfs to add loading modules to startup: [vfio_pci, vfio, vfio_iommu_type1]"$reset
+#update-initramfs -u
+#
+### NOTE
+###   Change this to using template instead of echoing, to simplify updating,
+###   managmenet, and conversion to higher level language
+#echo $strong"Adding$accent udev$reset rules to configure vfio devices to support unpriviledged access for PCI passthrough..."$reset
+#echo "SUBSYSTEM==\"vfio\" OWNER=\"root\" GROUP=\"libvirt\" MODE=\"0660\"" > /etc/udev/rules.d/10-vfio-permissions.rules
+#
+#
+#echo $success"Installation Complete!$reset $subheader Please reboot toactivate iommu."$reset
+#
+## Unbind NIC using 1 of 3 methods:
+##  (1) /etc/rc.local manual echo unbind 
+##  (2) /etc/modprobe.d/multiverse.conf `blacklist {module-name}` obtained from lspci -k
+##  (3) /etc/modprobe.d/multiverse.conf 'options vfio-pci ids=...
+#
+## Bind the device if option 2 or 3 used, manual bind with echo to vfio-pci driver
+#
+## If rc.local is created chmod +x /etc/rc.local
+#
+## Create the first Router VM
+#
+#

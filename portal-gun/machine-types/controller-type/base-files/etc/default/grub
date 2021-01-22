@@ -1,0 +1,101 @@
+#
+# Multiverse OS: Controller VM
+##########################################################################
+##
+## AMD Options
+## amd_iommu={off|fullflush|force_isolation}
+## amd_iommu_dump=?
+## amd_iommu_intr={legacy|vapic}
+##########################################################################
+# acpi_force_table_verification=?
+# acpi_no_watchdog=?
+
+# ca_keys={id:<keyid>} # Can use this to set Multiverse CA as trusted
+
+# condev={HW|S390}
+# conmode=?
+# console={tty<n>|ttyS<n>|ttyUSB0|uart[8250],{io,mmio,mmio16,mmio32,0x...}|hvc}
+# earlycon 
+
+# console_msg_format={default|syslog} # We will add a message forma for Multiverse
+                                    # and have our terminal print out the default
+                                    # look but also having access to the bson version.
+
+
+# default_hugepagesz=?
+
+# enforcing=? # Enforce SELinux
+
+# goldfish= # Enable the goldfish android emulator
+
+
+# hpet={disable|force|verbose}
+# hpet_mmap={X86|HPET_MMAP} #Allows userspace to map HPET registers
+
+
+# hugetlb_cma={nn[KMGTPE]} # The size of the CMA area used for allocation of huge pages 
+# hugepages={HW,X86-32,IA-64}
+
+
+# rhgb = redhatgraphicalboot
+# quiet = hides majority of boot messages
+# nousb = disable USB support
+# cgroup_disable=memory disables the memory cgroup
+# module_blacklist={MODULE}
+# modprobe.blacklist={MODULE1,MODULE2,MODULE3}
+# {MODULE_NAME}.blacklist=1
+# processor.max_cstate=5
+
+
+#ERR1_RESOLUTION="idle=nomwait" # Poll forces a polling idle loop that can slightly improve performance of waking up a idle CPU, but will lot a lot of power and may make the system run hot. Not recommended. idle=nowwait: disable mwait for the cpus
+
+# intel_iommu={on|off|igfx_off|forcedac|strict|sp_off|sm_on|tboot_noforce|nobounce}
+
+# intel_idle.max_cstate=0 disables intel_idle and fallback on acpi_idle
+		      #1-9 specify max depth of C-state
+
+#BOOTCONFIG="" # Multiverse OS will be using BOOTCONFIG to store keys, session, 
+#              # and other related data that acn be used within binary runtimes. 
+
+# isolcpus=2,3 # Isolate a given set of CPUs form distrubance
+# intremap={on|off|nosid|no_x2apic_optout|nopost}
+# iomem={strict|relaxed}
+# iommu.strict={0|1}
+# iommu.passthrough={1|0}
+# iommu={off|force|noforce|biomerge|panic|nopanic|merge|nomerge|soft|pt|nopt|nobypass}
+# **Iommu + VTD can't prtect the system unless x2APIC and interrupt remapping are supported**
+# **CSME (Intel ME) may be able to disable VT-d via PSF and PAVP**
+#lapic=1 lapic_timer_c2_ok=1 libata.dma=3,4 libata.ignore_hpa=0"
+
+KVM="intremap=no_x2apic_optout iommu=pt iommu.passthrough=1 iommu.strict=0 intel_idle.max_cstate=2 iomem=relaxed"
+INTEL_KVM="intel_iommu=on kvm-intel.nested=1 kvm-intel.emulate_invalid_guest_state=1 kvm-intel.flexpriority=1"
+AMD_KVM="amd_iommu=fullflush amd_iommu_intr=vapic amd_iommu_dump=0"
+
+SECURITY="tsx_async_abort=full,nosmt nosmt=force " # enforcing=1 (forces selinux) module.sig_enforce=1 lockdown 
+
+CPU="isolcpus=2,3"
+CLOCK="hpet=force hpet_mmap=1 x2apic_phys clocksource=hpet,tsc highrest=on hcl=1 slew_tick=1  idle=nomwait"
+PCI="pci=pcie_bus_safe pci=realloc=on"
+
+GPU="modprobe.blacklist=nouveau"
+AMD_GPU=""
+NVIDIA_GPU=""
+
+NET="nf_conntrack.acct=1"
+
+UI="quiet" #splash logo.nologo=1"
+
+LANGUAGE="LANG=en_US.UTF8" # We will want this set early so we can support 
+                           # complete boot localization
+##########################################################################
+GRUB_DEFAULT=0                                   
+GRUB_TIMEOUT=3
+#GRUB_TERMINAL_INPUT="console serial"
+#GRUB_PRELOAD_MODULES=""
+#GRUB_BACKGROUND=""
+#GRUB_DISABLE_RECOVERY="true"
+GRUB_DISTRIBUTOR="Multiverse OS: Controller VM"                 
+GRUB_CMDLINE_LINUX_DEFAULT="$KVM $INTEL_KVM $SECURITY $CPU $PCI $CLOCK $GPU $NET $UI LANGUAGE"
+GRUB_CMDLINE_LINUX=""
+#GRUB_CMDLINE_LINUX="BOOTCONFIG" 
+##########################################################################

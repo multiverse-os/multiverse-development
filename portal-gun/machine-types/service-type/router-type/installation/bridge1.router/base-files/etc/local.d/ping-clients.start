@@ -1,0 +1,20 @@
+#!/bin/sh
+
+## TODO: Future iterations, like go should obviously
+## only setup the one for the right verison of the router
+
+# bridge1
+nohup ping -c 1 10.1.1.2 &
+nohup ping -c 1 10.1.1.10 &
+nohup ping -c 1 10.1.1.11 &
+nohup ping -c 1 10.1.1.12 &
+# bridge11
+nohup ping -c 1 10.1.1.2 &
+nohup ping -c 1 10.1.1.10 &
+nohup ping -c 1 10.1.1.11 &
+nohup ping -c 1 10.1.1.12 &
+# bridge12
+nohup ping -c 1 10.1.1.2 &
+nohup ping -c 1 10.1.1.10 &
+nohup ping -c 1 10.1.1.11 &
+nohup ping -c 1 10.1.1.12 &

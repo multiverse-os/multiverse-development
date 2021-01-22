@@ -1,0 +1,19 @@
+# Others that may need to be added in the future
+#ACTION=="add" SUBSYSTEM=="module" KERNEL=="fuse" RUN+="/var/multiverse/fuse-log.sh"
+
+# Active Requirements 
+###############################################################################
+#### VFIO
+# Grant /dev/vfio ownership to root:kvm
+SUBSYSTEM=="vfio"               MODE="0660" OWNER="root" GROUP="kvm" 
+
+#### TPM
+# Grant /dev/tmp* ownership to root:kvm 
+KERNEL=="tpmrm[0-9]*|tpm[0-9]*" MODE="0660" OWNER="root" GROUP="kvm"
+
+#### VSOCK
+# Grant /dev/vfio ownership to root:kvm
+SUBSYSTEM=="vfio"     OWNER="root" GROUP="kvm" MODE="0660"
+KERNEL=="vsock"       OWNER="root" GROUP="kvm" MODE="0660"
+KERNEL=="vhost-vsock" OWNER="root" GROUP="kvm" MODE="0660"
+KERNEL=="vhost-net"   OWNER="root" GROUP="kvm" MODE="0660"

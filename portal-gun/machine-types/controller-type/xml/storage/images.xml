@@ -1,0 +1,16 @@
+<pool type='dir'>
+  <name>images</name>
+  <capacity unit='bytes'>0</capacity>
+  <allocation unit='bytes'>0</allocation>
+  <available unit='bytes'>0</available>
+  <source>
+  </source>
+  <target>
+    <path>/var/multiverse/images</path>
+    <permissions>
+      <mode>0750</mode>
+      <owner>1000</owner>
+      <group>1000</group>
+    </permissions>
+  </target>
+</pool>

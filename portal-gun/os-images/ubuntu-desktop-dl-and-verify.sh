@@ -63,8 +63,8 @@ echo -e "    the process by automating the steps, it is up to you to actually co
 echo -e "    the checksums and read the output of the gpg --verify command."$reset
 
 echo -e $text"Removing verification files..."$reset
-rm -f SHA256SUMS
-rm -f SHA256SUMS.gpg
+#rm -f SHA256SUMS
+#rm -f SHA256SUMS.gpg
 
 echo -e ""
 
