@@ -1,2 +1,0 @@
-# AMD (previously ATI) Passthrough 
-

@@ -1,4 +1,0 @@
-# /etc/hosts.deny: list of hosts that are _not_ allowed to access the system.
-#                  See the manual pages hosts_access(5) and hosts_options(5).
-###############################################################################
-ALL: PARANOID
