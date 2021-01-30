@@ -6,12 +6,12 @@
 # spec_store_bypass spectre_v2_user spectre_v2 tsx_async_abort=full,nosmt
 ###############################################################################
 #if [ -z $(lscpu | grep "Intel" ]; then
-	INTEL_CPU="intel_iommu=on kvm-intel.nested=1"
+	#INTEL_CPU="intel_iommu=on kvm-intel.nested=1"
 #elif [-z $(lscpu | grep "AMD" ]; then
-	#AMD_CPU="amd_iommu=on iommu=pt"
+	AMD_CPU="amd_iommu=on iommu=pt"
 #fi
 ###############################################################################
-CPU="$INTEL_CPU isocpus=2-9,12-19" #idle=nomwait pci=realloc 
+CPU="$AMD_CPU isocpus=2,3" #idle=nomwait pci=realloc 
 GPU="nomodeset" 
 MEM=""   # page_alloc.shuffle=1 iomem=relaxed transparent_hugepage=always
 CLOCK="" # clocksource=hpet,tsc hpet_mmap=1 hcl=1 hpet=force 
