@@ -1,0 +1,4 @@
+# Portal Gun: Service Type VM
+A service type VM is a long running background task that may do anything from obstuficate your internet usage by creating profiles that lookup random sets of urls, logs in, nagivates, etc. to make DNS fingerprinting a near impossibility. Another example of a service type would be a VM that does continuous backing up and versioning of your data. Managing both offsite and local replication of data across disks. These VMs would only have exactly the access they need to complete their long running task and greatly limited otherwise. The idea is to make it easy to share these types of long running tasks, but also to isolate them from the controller and not provide all the functionality an application VM provides (such as passing through windows and other data to the controller. 
+
+

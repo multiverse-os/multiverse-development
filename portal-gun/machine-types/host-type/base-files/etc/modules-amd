@@ -20,7 +20,6 @@ kvm_amd
 # VHost Networking
 # vhost_vsock
 ##############################################################################
-
 9p
 9pnet
 9pnet_virtio

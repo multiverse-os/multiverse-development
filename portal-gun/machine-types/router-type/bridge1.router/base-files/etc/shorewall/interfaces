@@ -1,0 +1,15 @@
+#
+# Shorewall -- /etc/shorewall/interfaces
+#
+# For information about entries in this file, type "man shorewall-interfaces"
+#
+# The manpage is also online at
+# http://www.shorewall.net/manpages/shorewall-interfaces.html
+#
+?FORMAT 2
+###############################################################################
+#ZONE		INTERFACE	OPTIONS
+###############################################################################
+wan             eth1            routefilter,tcpflags,logmartians,nosmurfs
+br1             eth0            routefilter,tcpflags,logmartians,nosmurfs
+vpn             tun0            nosmurfs,tcpflags
