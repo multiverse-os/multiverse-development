@@ -1,8 +1,0 @@
-<network>
-  <name>virbr0</name>
-  <bridge name='virbr0' stp='on' delay='0'/>
-  <mac address='00:00:10:10:10:fe'/>
-  <domain name='virbr0'/>
-  <ip address='10.10.10.254' netmask='255.255.255.0'>
-  </ip>
-</network>
